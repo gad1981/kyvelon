@@ -45,8 +45,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="font-body relative h-[100svh] overflow-hidden">
-        <div className="noise-overlay fixed inset-0 z-50" aria-hidden="true" />
+      <body className="font-body relative min-h-full">
+        <div className="noise-overlay fixed inset-0 z-[60] pointer-events-none" aria-hidden="true" />
         {children}
       </body>
     </html>

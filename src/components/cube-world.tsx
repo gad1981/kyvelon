@@ -188,6 +188,7 @@ export function CubeWorld() {
         "relative h-[100svh] w-full overflow-hidden bg-surface",
         dragging ? "cursor-grabbing" : entered ? "cursor-default" : "cursor-grab",
       )}
+      id="cube"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

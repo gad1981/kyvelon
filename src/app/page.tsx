@@ -1,9 +1,13 @@
 import { CubeWorld } from "@/components/cube-world";
+import { SiteFooter } from "@/components/site-footer";
 
 export default function Home() {
   return (
-    <main className="flex-1">
-      <CubeWorld />
-    </main>
+    <>
+      <main>
+        <CubeWorld />
+      </main>
+      <SiteFooter />
+    </>
   );
 }
