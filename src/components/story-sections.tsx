@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Dictionary } from "@/i18n/types";
 import type { Locale } from "@/i18n/config";
 
@@ -13,7 +12,6 @@ export function StorySections({
 
   return (
     <div className="relative bg-surface">
-      {/* Origin */}
       <section
         id="origin"
         className="scroll-mt-8 border-b border-navy/10 py-20 sm:py-28"
@@ -51,7 +49,6 @@ export function StorySections({
         </div>
       </section>
 
-      {/* Connections */}
       <section
         id="connections"
         className="scroll-mt-8 border-b border-navy/10 py-20 sm:py-28"
@@ -87,43 +84,6 @@ export function StorySections({
         </div>
       </section>
 
-      {/* Founder */}
-      <section
-        id="founder"
-        className="scroll-mt-8 border-b border-navy/10 py-20 sm:py-28"
-      >
-        <div className="mx-auto grid max-w-6xl items-end gap-12 px-5 sm:px-8 lg:grid-cols-[1.15fr_0.85fr]">
-          <div>
-            <p className="text-[0.72rem] tracking-[0.22em] text-electric uppercase">
-              {s.founderEyebrow}
-            </p>
-            <h2 className="font-display mt-3 text-3xl font-semibold tracking-[-0.03em] text-navy sm:text-5xl">
-              {s.founderTitle}
-            </h2>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-navy/70 sm:text-lg">
-              {s.founderBody}
-            </p>
-            <Link
-              href="https://georgegad.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex h-11 items-center bg-navy px-5 text-[0.7rem] tracking-[0.16em] text-white uppercase transition hover:bg-electric"
-            >
-              {s.founderCta}
-            </Link>
-          </div>
-          <aside className="border-s-2 border-electric ps-6 sm:ps-8">
-            <p className="font-display text-xl leading-snug text-navy sm:text-2xl">
-              “{s.founderQuote}”
-            </p>
-            <p className="mt-6 text-[0.72rem] tracking-[0.18em] text-navy/50 uppercase">
-              {s.founderMeta}
-            </p>
-          </aside>
-        </div>
-      </section>
-
-      {/* Method */}
       <section
         id="method"
         className="relative scroll-mt-8 overflow-hidden bg-navy py-20 text-white sm:py-28"
@@ -179,7 +139,6 @@ export function StorySections({
         </div>
       </section>
 
-      {/* Close CTA */}
       <section className="border-b border-navy/10 py-20 sm:py-24">
         <div className="mx-auto max-w-6xl px-5 text-center sm:px-8">
           <p className="text-[0.72rem] tracking-[0.22em] text-electric uppercase">

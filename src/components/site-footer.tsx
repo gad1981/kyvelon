@@ -52,12 +52,12 @@ export function SiteFooter({
           <ul className="mt-4 space-y-2.5">
             {SERVICE_FACE_IDS.map((id) => (
               <li key={id}>
-                <a
-                  href={`${home}#cube`}
+                <Link
+                  href={`/${locale}/faces/${id}`}
                   className="text-sm text-white/65 transition hover:text-white"
                 >
                   {t.faces[id].title}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -85,20 +85,12 @@ export function SiteFooter({
               </a>
             </li>
             <li>
-              <a
-                href={`${home}#connections`}
+              <Link
+                href={`/${locale}/people`}
                 className="text-sm text-white/65 transition hover:text-white"
               >
-                {t.story.connectEyebrow}
-              </a>
-            </li>
-            <li>
-              <a
-                href={`${home}#founder`}
-                className="text-sm text-white/65 transition hover:text-white"
-              >
-                {f.founder}
-              </a>
+                {f.people}
+              </Link>
             </li>
             <li>
               <a
@@ -109,12 +101,12 @@ export function SiteFooter({
               </a>
             </li>
             <li>
-              <a
-                href="mailto:georgiosgad@gmail.com"
+              <Link
+                href={`/${locale}/terms`}
                 className="text-sm text-white/65 transition hover:text-white"
               >
-                {f.startBrief}
-              </a>
+                {f.terms}
+              </Link>
             </li>
           </ul>
         </div>
@@ -125,6 +117,14 @@ export function SiteFooter({
           </p>
           <ul className="mt-4 space-y-2.5 text-sm text-white/65">
             <li>{f.location}</li>
+            <li>
+              <Link
+                href={`/${locale}/contact`}
+                className="transition hover:text-white"
+              >
+                {f.startBrief}
+              </Link>
+            </li>
             <li>
               <a
                 href="mailto:georgiosgad@gmail.com"
@@ -149,16 +149,6 @@ export function SiteFooter({
                 className="transition hover:text-white"
               >
                 georgegad.com
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="https://linkedin.com/in/georgegad"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition hover:text-white"
-              >
-                LinkedIn
               </Link>
             </li>
           </ul>

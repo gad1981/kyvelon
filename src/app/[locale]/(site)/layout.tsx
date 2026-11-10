@@ -1,13 +1,13 @@
-import { notFound } from "next/navigation";
-import { CubeWorld } from "@/components/cube-world";
 import { SiteFooter } from "@/components/site-footer";
-import { StorySections } from "@/components/story-sections";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { notFound } from "next/navigation";
 
-export default async function HomePage({
+export default async function SiteLayout({
+  children,
   params,
 }: {
+  children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const { locale: raw } = await params;
@@ -17,10 +17,7 @@ export default async function HomePage({
 
   return (
     <>
-      <main>
-        <CubeWorld locale={locale} t={t} />
-        <StorySections locale={locale} t={t} />
-      </main>
+      {children}
       <SiteFooter locale={locale} t={t} />
     </>
   );

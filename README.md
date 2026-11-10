@@ -4,9 +4,10 @@ Full-screen **κύβος** cube website for Kyvelon — software, websites, auto
 
 ## Experience
 
-1. **Cube stage** — drag to rotate, enter any of six faces
-2. **Story depth** — origin, connections between faces, founder, method, close CTA
-3. **Footer** — classic site footer with contact and language switcher
+1. **Home** (`/[locale]`) — cube stage + story + **site footer**
+2. **Face apps** (`/[locale]/faces/[face]`) — full-screen apps, **no footer**
+3. **Site pages** (with footer) — `/contact`, `/terms`, `/people`
+4. **Story** on home — origin, connections, method (founder lives on People)
 
 ## Languages (i18n)
 

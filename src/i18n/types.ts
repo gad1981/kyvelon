@@ -23,6 +23,7 @@ export type Dictionary = {
     enterFace: string;
     facesNav: string;
     backToCube: string;
+    backHome: string;
     faceLabel: string;
     briefFace: string;
     dragAria: string;
@@ -48,12 +49,6 @@ export type Dictionary = {
     connectTitle: string;
     connectBody: string;
     threads: { from: string; to: string; body: string }[];
-    founderEyebrow: string;
-    founderTitle: string;
-    founderBody: string;
-    founderQuote: string;
-    founderMeta: string;
-    founderCta: string;
     methodEyebrow: string;
     methodTitle: string;
     methodBody: string;
@@ -63,13 +58,36 @@ export type Dictionary = {
     closeBody: string;
     closeCta: string;
   };
+  people: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    founderRole: string;
+    founderName: string;
+    founderBio: string;
+    founderQuote: string;
+    founderMeta: string;
+    founderCta: string;
+  };
+  contactPage: {
+    eyebrow: string;
+    title: string;
+    body: string;
+  };
+  terms: {
+    eyebrow: string;
+    title: string;
+    updated: string;
+    sections: { title: string; body: string }[];
+  };
   footer: {
     blurb: string;
     faces: string;
     company: string;
     contact: string;
     theCube: string;
-    founder: string;
+    people: string;
+    terms: string;
     startBrief: string;
     method: string;
     location: string;

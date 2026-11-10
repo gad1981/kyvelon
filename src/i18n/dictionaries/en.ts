@@ -16,6 +16,7 @@ const en: Dictionary = {
     enterFace: "Enter face",
     facesNav: "Cube faces",
     backToCube: "Back to cube",
+    backHome: "Home",
     faceLabel: "Face",
     briefFace: "Brief this face",
     dragAria:
@@ -146,14 +147,6 @@ const en: Dictionary = {
         body: "Strategy discovers the next product face. The cube turns again.",
       },
     ],
-    founderEyebrow: "The founder",
-    founderTitle: "George Gad connects strategy to systems.",
-    founderBody:
-      "Kyvelon is the delivery studio of georgegad.com — 16+ years leading digital strategy and innovation across EMEA for brands like P&G, Nestlé, and Essity. Data-led. Human-centered. Tech-fluent. From Athens, the same discipline that grew brands now ships software, sites, and automation you can run on.",
-    founderQuote:
-      "In a digital, yet human world — structure is how ideas become systems that grow.",
-    founderMeta: "Athens, Greece · Digital strategy & innovation",
-    founderCta: "Visit georgegad.com",
     methodEyebrow: "The method",
     methodTitle: "Structure. Faces. Assemble.",
     methodBody:
@@ -181,6 +174,51 @@ const en: Dictionary = {
       "Bring the brief. We will map the cube with you — then build the face that unlocks the rest.",
     closeCta: "Back to the cube",
   },
+  people: {
+    eyebrow: "People",
+    title: "The people behind the cube.",
+    body: "Kyvelon is built by operators who have shipped strategy and systems across EMEA. Meet the founder who connects both.",
+    founderRole: "Founder",
+    founderName: "George Gad",
+    founderBio:
+      "Kyvelon is the delivery studio of georgegad.com — 16+ years leading digital strategy and innovation across EMEA for brands like P&G, Nestlé, and Essity. Data-led. Human-centered. Tech-fluent. From Athens, the same discipline that grew brands now ships software, sites, and automation you can run on.",
+    founderQuote:
+      "In a digital, yet human world — structure is how ideas become systems that grow.",
+    founderMeta: "Athens, Greece · Digital strategy & innovation",
+    founderCta: "Visit georgegad.com",
+  },
+  contactPage: {
+    eyebrow: "Contact",
+    title: "Brief the next cube.",
+    body: "Tell us which face you need first — product, site, automation, or a full digital system. We reply from Athens.",
+  },
+  terms: {
+    eyebrow: "Legal",
+    title: "Terms & conditions",
+    updated: "Last updated: November 2026",
+    sections: [
+      {
+        title: "About Kyvelon",
+        body: "Kyvelon provides digital services including software creation, websites, automation, and strategy delivery. These terms govern use of kyvelon digital properties and related inquiries.",
+      },
+      {
+        title: "Services",
+        body: "Project scope, timelines, and fees are agreed in writing for each engagement. Work begins after mutual confirmation of the brief and commercial terms.",
+      },
+      {
+        title: "Intellectual property",
+        body: "Unless otherwise agreed, deliverables created for a client are assigned to that client upon full payment. Kyvelon retains rights to its pre-existing tools, methods, and brand assets.",
+      },
+      {
+        title: "Privacy",
+        body: "Contact details you send via forms or email are used only to respond to your inquiry and deliver services. We do not sell personal data.",
+      },
+      {
+        title: "Contact",
+        body: "Questions about these terms: georgiosgad@gmail.com · Athens, Greece.",
+      },
+    ],
+  },
   footer: {
     blurb:
       "Digital systems built as cubes — software, websites, automation, and digital services from Athens.",
@@ -188,7 +226,8 @@ const en: Dictionary = {
     company: "Company",
     contact: "Contact",
     theCube: "The cube",
-    founder: "Founder · georgegad.com",
+    people: "People",
+    terms: "Terms & conditions",
     startBrief: "Start a brief",
     method: "The κύβος method",
     location: "Athens, Greece",

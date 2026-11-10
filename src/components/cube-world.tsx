@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -9,7 +10,6 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { ContactForm } from "@/components/contact-form";
 import { IsoGrid } from "@/components/iso-grid";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Locale } from "@/i18n/config";
@@ -37,11 +37,11 @@ export function CubeWorld({
   locale: Locale;
   t: Dictionary;
 }) {
+  const router = useRouter();
   const [size, setSize] = useState(280);
   const start = FACE_ROTATIONS.software;
   const [rot, setRot] = useState({ x: start.x - 22, y: start.y + 36 });
   const [active, setActive] = useState<CubeFaceId>("software");
-  const [entered, setEntered] = useState<CubeFaceId | null>(null);
   const [dragging, setDragging] = useState(false);
   const [hint, setHint] = useState(true);
   const rotRef = useRef(rot);
@@ -76,7 +76,7 @@ export function CubeWorld({
   }, []);
 
   useEffect(() => {
-    if (reduceMotion.current || entered) return;
+    if (reduceMotion.current) return;
     const tick = () => {
       if (idle.current && !drag.current) {
         setRot((r) => {
@@ -91,7 +91,7 @@ export function CubeWorld({
     return () => {
       if (frame.current) cancelAnimationFrame(frame.current);
     };
-  }, [entered]);
+  }, []);
 
   const half = size / 2;
   const faceTransforms: Record<CubeFaceId, string> = {
@@ -116,29 +116,13 @@ export function CubeWorld({
   const enterFace = useCallback(
     (id: CubeFaceId) => {
       snapTo(id);
-      setEntered(id);
-      idle.current = false;
+      router.push(`/${locale}/faces/${id}`);
     },
-    [snapTo],
+    [locale, router, snapTo],
   );
 
-  const exitFace = useCallback(() => {
-    setEntered(null);
-    window.setTimeout(() => {
-      idle.current = true;
-    }, 400);
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && entered) exitFace();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [entered, exitFace]);
-
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (entered || e.button !== 0) return;
+    if (e.button !== 0) return;
     if ((e.target as HTMLElement).closest("[data-hud]")) return;
     idle.current = false;
     setDragging(true);
@@ -188,15 +172,13 @@ export function CubeWorld({
   };
 
   const face = t.faces[active];
-  const open = entered ? t.faces[entered] : null;
-  const openId = entered;
 
   return (
     <div
       id="cube"
       className={cn(
         "relative h-[100svh] w-full overflow-hidden bg-surface",
-        dragging ? "cursor-grabbing" : entered ? "cursor-default" : "cursor-grab",
+        dragging ? "cursor-grabbing" : "cursor-grab",
       )}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -213,10 +195,6 @@ export function CubeWorld({
         style={{
           perspective: `${Math.round(size * 3.2)}px`,
           perspectiveOrigin: "50% 48%",
-          opacity: entered ? 0.18 : 1,
-          transform: entered ? "scale(1.35)" : "scale(1)",
-          transition: "opacity 500ms ease, transform 500ms ease",
-          pointerEvents: entered ? "none" : "auto",
         }}
       >
         <div style={{ transformStyle: "preserve-3d" }}>
@@ -292,16 +270,7 @@ export function CubeWorld({
         className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-4 p-5 sm:p-7"
       >
         <div className="pointer-events-auto flex flex-col gap-3">
-          <Link
-            href={`/${locale}#cube`}
-            className="block w-[132px] sm:w-[168px]"
-            onClick={(e) => {
-              if (entered) {
-                e.preventDefault();
-                exitFace();
-              }
-            }}
-          >
+          <Link href={`/${locale}#cube`} className="block w-[132px] sm:w-[168px]">
             <Image
               src="/kyvelon-logo.png"
               alt="Kyvelon"
@@ -327,7 +296,7 @@ export function CubeWorld({
 
       <div data-hud className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-6">
         <div className="mx-auto flex max-w-5xl flex-col gap-4">
-          {hint && !entered && (
+          {hint && (
             <p className="text-center text-[0.68rem] tracking-[0.2em] text-navy/45 uppercase">
               {t.cube.hint}
             </p>
@@ -371,14 +340,8 @@ export function CubeWorld({
                 key={id}
                 type="button"
                 data-hud
-                onClick={() => {
-                  if (entered) {
-                    setEntered(id);
-                    snapTo(id);
-                  } else {
-                    snapTo(id);
-                  }
-                }}
+                onClick={() => snapTo(id)}
+                onDoubleClick={() => enterFace(id)}
                 className={cn(
                   "h-9 shrink-0 px-3 text-[0.65rem] tracking-[0.14em] uppercase transition",
                   active === id
@@ -392,109 +355,6 @@ export function CubeWorld({
             ))}
           </nav>
         </div>
-      </div>
-
-      <div
-        className={cn(
-          "absolute inset-0 z-30 flex flex-col bg-navy text-white transition duration-500",
-          open
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none translate-y-6 opacity-0",
-        )}
-        aria-hidden={!open}
-      >
-        {open && openId && (
-          <>
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 opacity-40"
-              style={{
-                backgroundImage: `
-                  linear-gradient(30deg, transparent 47%, rgb(0 56 248 / 0.5) 49%, transparent 52%),
-                  linear-gradient(150deg, transparent 47%, rgb(255 255 255 / 0.08) 49%, transparent 52%)
-                `,
-                backgroundSize: "72px 42px",
-              }}
-            />
-            <div className="relative flex items-center justify-between gap-4 p-5 sm:p-7">
-              <button
-                type="button"
-                onClick={exitFace}
-                className="inline-flex h-10 items-center border border-white/20 px-4 text-[0.68rem] tracking-[0.16em] uppercase transition hover:border-electric hover:text-electric-soft"
-              >
-                ← {t.cube.backToCube}
-              </button>
-              <p className="text-[0.68rem] tracking-[0.22em] text-electric-soft uppercase">
-                {t.cube.faceLabel} · {open.short}
-              </p>
-            </div>
-            <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 pb-16 sm:px-8">
-              <h2 className="font-display text-4xl font-semibold tracking-[-0.03em] sm:text-6xl">
-                {open.title}
-              </h2>
-              <p className="mt-5 max-w-2xl text-lg text-white/70 sm:text-xl">
-                {open.copy}
-              </p>
-              <ul className="mt-8 space-y-3 border-s border-electric/50 ps-5">
-                {open.detail.map((line) => (
-                  <li
-                    key={line}
-                    className="text-sm leading-relaxed text-white/75 sm:text-base"
-                  >
-                    {line.includes("georgegad.com") &&
-                    !line.includes("@") ? (
-                      <>
-                        {line.split("georgegad.com")[0]}
-                        <Link
-                          href="https://georgegad.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-electric-soft underline underline-offset-4"
-                        >
-                          georgegad.com
-                        </Link>
-                        {line.split("georgegad.com")[1]}
-                      </>
-                    ) : line.includes("@") ? (
-                      <a
-                        href={`mailto:${line}`}
-                        className="hover:text-electric-soft"
-                      >
-                        {line}
-                      </a>
-                    ) : line.startsWith("+30") ? (
-                      <a
-                        href={`tel:${line.replace(/\s/g, "")}`}
-                        className="hover:text-electric-soft"
-                      >
-                        {line}
-                      </a>
-                    ) : (
-                      line
-                    )}
-                  </li>
-                ))}
-              </ul>
-              {openId === "contact" && (
-                <div className="mt-10 max-w-xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm sm:p-6">
-                  <ContactForm t={t.contactForm} />
-                </div>
-              )}
-              {openId !== "contact" && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    snapTo("contact");
-                    setEntered("contact");
-                  }}
-                  className="mt-10 inline-flex h-12 w-fit items-center bg-electric px-6 text-[0.72rem] tracking-[0.16em] text-white uppercase transition hover:bg-white hover:text-navy"
-                >
-                  {t.cube.briefFace}
-                </button>
-              )}
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
