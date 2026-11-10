@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { trackEvent } from "@/components/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +22,11 @@ export function ContactForm({ t }: { t: Dictionary["contactForm"] }) {
       setStatus("error");
       return;
     }
+
+    trackEvent("generate_lead", {
+      form_id: "contact",
+      method: "mailto",
+    });
 
     const subject = encodeURIComponent(`Kyvelon inquiry from ${name}`);
     const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`);

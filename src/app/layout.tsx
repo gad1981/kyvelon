@@ -6,6 +6,7 @@ import {
   Noto_Sans_Arabic,
   Geist_Mono,
 } from "next/font/google";
+import { Analytics } from "@/components/analytics";
 import "./globals.css";
 
 const display = Syne({
@@ -38,6 +39,9 @@ const mono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.kyvelon.com",
+  ),
   title: {
     default: "Kyvelon — Digital systems built as cubes",
     template: "%s · Kyvelon",
@@ -47,6 +51,11 @@ export const metadata: Metadata = {
   icons: {
     icon: "/cube-mark.svg",
   },
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? {
+        google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+      }
+    : undefined,
 };
 
 export default function RootLayout({
@@ -59,6 +68,7 @@ export default function RootLayout({
       className={`${display.variable} ${body.variable} ${greek.variable} ${arabic.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="font-body relative min-h-full">
+        <Analytics />
         <div
           className="noise-overlay pointer-events-none fixed inset-0 z-[60]"
           aria-hidden="true"
