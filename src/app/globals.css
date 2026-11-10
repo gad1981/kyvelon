@@ -113,6 +113,12 @@
     background-attachment: fixed;
   }
 
+  html.rtl body,
+  html[dir="rtl"] body,
+  [dir="rtl"] {
+    font-family: var(--font-arabic), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  }
+
   ::selection {
     background: color-mix(in srgb, var(--electric) 28%, white);
     color: var(--navy);

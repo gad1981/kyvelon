@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Syne, Manrope, Geist_Mono } from "next/font/google";
+import {
+  Syne,
+  Manrope,
+  Noto_Sans,
+  Noto_Sans_Arabic,
+  Geist_Mono,
+} from "next/font/google";
 import "./globals.css";
 
 const display = Syne({
@@ -10,7 +16,19 @@ const display = Syne({
 
 const body = Manrope({
   variable: "--font-body",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const greek = Noto_Sans({
+  variable: "--font-greek",
+  subsets: ["greek", "latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const arabic = Noto_Sans_Arabic({
+  variable: "--font-arabic",
+  subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
 });
 
@@ -26,27 +44,25 @@ export const metadata: Metadata = {
   },
   description:
     "Kyvelon builds software, websites, automation, and digital services from Athens. Founded by George Gad — structured systems for brands that need to move.",
-  metadataBase: new URL("https://kyvelon.local"),
-  openGraph: {
-    title: "Kyvelon — Digital systems built as cubes",
-    description:
-      "Software. Websites. Automation. Digital services. Structured like κύβος — every face precise, every system complete.",
-    type: "website",
-    locale: "en_GB",
-  },
   icons: {
     icon: "/cube-mark.svg",
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${display.variable} ${body.variable} ${greek.variable} ${arabic.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="font-body relative min-h-full">
-        <div className="noise-overlay fixed inset-0 z-[60] pointer-events-none" aria-hidden="true" />
+        <div
+          className="noise-overlay pointer-events-none fixed inset-0 z-[60]"
+          aria-hidden="true"
+        />
         {children}
       </body>
     </html>

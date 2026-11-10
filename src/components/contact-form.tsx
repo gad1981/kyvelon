@@ -4,8 +4,9 @@ import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import type { Dictionary } from "@/i18n/types";
 
-export function ContactForm() {
+export function ContactForm({ t }: { t: Dictionary["contactForm"] }) {
   const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -33,37 +34,37 @@ export function ContactForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-2">
           <span className="text-[0.7rem] tracking-[0.18em] text-white/50 uppercase">
-            Name
+            {t.name}
           </span>
           <Input
             name="name"
             required
-            placeholder="Your name"
+            placeholder={t.namePlaceholder}
             className="h-11 rounded-none border-white/20 bg-white text-navy"
           />
         </label>
         <label className="block space-y-2">
           <span className="text-[0.7rem] tracking-[0.18em] text-white/50 uppercase">
-            Email
+            {t.email}
           </span>
           <Input
             name="email"
             type="email"
             required
-            placeholder="you@company.com"
+            placeholder={t.emailPlaceholder}
             className="h-11 rounded-none border-white/20 bg-white text-navy"
           />
         </label>
       </div>
       <label className="block space-y-2">
         <span className="text-[0.7rem] tracking-[0.18em] text-white/50 uppercase">
-          What should we build?
+          {t.message}
         </span>
         <Textarea
           name="message"
           required
           rows={4}
-          placeholder="Tell us about the product, automation, or digital system you need."
+          placeholder={t.messagePlaceholder}
           className="rounded-none border-white/20 bg-white text-navy"
         />
       </label>
@@ -73,13 +74,13 @@ export function ContactForm() {
           size="lg"
           className="h-11 rounded-none bg-electric px-6 tracking-[0.14em] uppercase hover:bg-white hover:text-navy"
         >
-          Send brief
+          {t.send}
         </Button>
         {status === "sent" && (
-          <p className="text-sm text-white/70">Opening your email client…</p>
+          <p className="text-sm text-white/70">{t.sent}</p>
         )}
         {status === "error" && (
-          <p className="text-sm text-red-300">Please complete all fields.</p>
+          <p className="text-sm text-red-300">{t.error}</p>
         )}
       </div>
     </form>

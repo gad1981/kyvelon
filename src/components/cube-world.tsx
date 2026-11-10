@@ -11,8 +11,10 @@ import {
 } from "react";
 import { ContactForm } from "@/components/contact-form";
 import { IsoGrid } from "@/components/iso-grid";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/types";
 import {
-  CUBE_FACES,
   FACE_ORDER,
   FACE_ROTATIONS,
   type CubeFaceId,
@@ -28,7 +30,13 @@ const TONE: Record<CubeFaceId, string> = {
   contact: "bg-[linear-gradient(180deg,#122044_0%,#000828_100%)]",
 };
 
-export function CubeWorld() {
+export function CubeWorld({
+  locale,
+  t,
+}: {
+  locale: Locale;
+  t: Dictionary;
+}) {
   const [size, setSize] = useState(280);
   const start = FACE_ROTATIONS.software;
   const [rot, setRot] = useState({ x: start.x - 22, y: start.y + 36 });
@@ -179,27 +187,27 @@ export function CubeWorld() {
     }
   };
 
-  const face = CUBE_FACES[active];
-  const open = entered ? CUBE_FACES[entered] : null;
+  const face = t.faces[active];
+  const open = entered ? t.faces[entered] : null;
+  const openId = entered;
 
   return (
     <div
+      id="cube"
       className={cn(
         "relative h-[100svh] w-full overflow-hidden bg-surface",
         dragging ? "cursor-grabbing" : entered ? "cursor-default" : "cursor-grab",
       )}
-      id="cube"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       role="application"
-      aria-label="Kyvelon cube world. Drag anywhere to rotate. Click a face to enter."
+      aria-label={t.cube.dragAria}
     >
       <IsoGrid />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(0_56_248_/_0.12),transparent_55%),linear-gradient(160deg,rgb(247_248_251)_0%,rgb(230_235_245)_100%)]" />
 
-      {/* Full-screen cube stage */}
       <div
         className="absolute inset-0 flex items-center justify-center"
         style={{
@@ -240,7 +248,8 @@ export function CubeWorld() {
                   "absolute flex flex-col items-center justify-center gap-2 border border-white/20 p-5 text-center text-white shadow-[inset_0_0_48px_rgb(255_255_255_/_0.07)] outline-none",
                   "focus-visible:ring-2 focus-visible:ring-white/80",
                   TONE[id],
-                  active === id && "outline outline-2 outline-offset-[-3px] outline-white/55",
+                  active === id &&
+                    "outline outline-2 outline-offset-[-3px] outline-white/55",
                 )}
                 style={{
                   width: size,
@@ -252,19 +261,21 @@ export function CubeWorld() {
                   WebkitBackfaceVisibility: "hidden",
                 }}
                 aria-pressed={active === id}
-                aria-label={`${CUBE_FACES[id].title}. Enter this face.`}
+                aria-label={`${t.faces[id].title}. ${t.cube.enterFace}`}
               >
                 <span className="text-[0.65rem] tracking-[0.32em] text-white/50 uppercase sm:text-[0.72rem]">
-                  Face
+                  {t.cube.faceLabel}
                 </span>
                 <span
                   className="font-display font-semibold tracking-[0.14em] uppercase"
-                  style={{ fontSize: `clamp(1.4rem, ${size * 0.09}px, 2.6rem)` }}
+                  style={{
+                    fontSize: `clamp(1.4rem, ${size * 0.09}px, 2.6rem)`,
+                  }}
                 >
-                  {CUBE_FACES[id].short}
+                  {t.faces[id].short}
                 </span>
                 <span className="max-w-[11ch] text-[0.75rem] leading-snug tracking-wide text-white/75 sm:text-sm">
-                  {CUBE_FACES[id].label}
+                  {t.faces[id].label}
                 </span>
               </button>
             ))}
@@ -272,50 +283,53 @@ export function CubeWorld() {
         </div>
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-[18%] left-1/2 h-12 w-[42%] -translate-x-1/2 rounded-[100%] bg-navy/30 blur-2xl"
+          className="pointer-events-none absolute bottom-[18%] start-1/2 h-12 w-[42%] -translate-x-1/2 rounded-[100%] bg-navy/30 blur-2xl rtl:translate-x-1/2"
         />
       </div>
 
-      {/* HUD */}
       <header
         data-hud
         className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-4 p-5 sm:p-7"
       >
-        <Link
-          href="/"
-          className="pointer-events-auto block w-[132px] sm:w-[168px]"
-          onClick={(e) => {
-            if (entered) {
-              e.preventDefault();
-              exitFace();
-            }
-          }}
-        >
-          <Image
-            src="/kyvelon-logo.png"
-            alt="Kyvelon"
-            width={1256}
-            height={278}
-            priority
-            className="h-auto w-full"
+        <div className="pointer-events-auto flex flex-col gap-3">
+          <Link
+            href={`/${locale}#cube`}
+            className="block w-[132px] sm:w-[168px]"
+            onClick={(e) => {
+              if (entered) {
+                e.preventDefault();
+                exitFace();
+              }
+            }}
+          >
+            <Image
+              src="/kyvelon-logo.png"
+              alt="Kyvelon"
+              width={1256}
+              height={278}
+              priority
+              className="h-auto w-full"
+            />
+          </Link>
+          <LanguageSwitcher
+            locale={locale}
+            label={t.lang.label}
+            className="pointer-events-auto"
           />
-        </Link>
-        <div className="pointer-events-none max-w-[14rem] text-right sm:max-w-xs">
+        </div>
+        <div className="pointer-events-none max-w-[14rem] text-end sm:max-w-xs">
           <p className="font-display text-lg leading-tight font-semibold tracking-[-0.03em] text-navy sm:text-2xl">
-            Digital systems
-            <span className="block text-electric">built as cubes.</span>
+            {t.brand.taglineLead}
+            <span className="block text-electric">{t.brand.taglineAccent}</span>
           </p>
         </div>
       </header>
 
-      <div
-        data-hud
-        className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-6"
-      >
+      <div data-hud className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-6">
         <div className="mx-auto flex max-w-5xl flex-col gap-4">
           {hint && !entered && (
             <p className="text-center text-[0.68rem] tracking-[0.2em] text-navy/45 uppercase">
-              Drag the screen · click a face to enter
+              {t.cube.hint}
             </p>
           )}
 
@@ -329,7 +343,7 @@ export function CubeWorld() {
           >
             <div className="min-w-0 flex-1">
               <p className="text-[0.65rem] tracking-[0.22em] text-electric uppercase">
-                Active face · {face.short}
+                {t.cube.activeFace} · {face.short}
               </p>
               <h1 className="font-display mt-1 text-xl font-semibold tracking-[-0.02em] text-navy sm:text-3xl">
                 {face.title}
@@ -344,13 +358,13 @@ export function CubeWorld() {
               onClick={() => enterFace(active)}
               className="inline-flex h-11 shrink-0 items-center bg-electric px-5 text-[0.7rem] tracking-[0.16em] text-white uppercase transition hover:bg-navy"
             >
-              Enter face
+              {t.cube.enterFace}
             </button>
           </div>
 
           <nav
             className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            aria-label="Cube faces"
+            aria-label={t.cube.facesNav}
           >
             {FACE_ORDER.map((id) => (
               <button
@@ -373,14 +387,13 @@ export function CubeWorld() {
                 )}
                 aria-current={active === id ? "true" : undefined}
               >
-                {CUBE_FACES[id].short}
+                {t.faces[id].short}
               </button>
             ))}
           </nav>
         </div>
       </div>
 
-      {/* Full-screen face room */}
       <div
         className={cn(
           "absolute inset-0 z-30 flex flex-col bg-navy text-white transition duration-500",
@@ -390,7 +403,7 @@ export function CubeWorld() {
         )}
         aria-hidden={!open}
       >
-        {open && (
+        {open && openId && (
           <>
             <div
               aria-hidden="true"
@@ -409,10 +422,10 @@ export function CubeWorld() {
                 onClick={exitFace}
                 className="inline-flex h-10 items-center border border-white/20 px-4 text-[0.68rem] tracking-[0.16em] uppercase transition hover:border-electric hover:text-electric-soft"
               >
-                ← Back to cube
+                ← {t.cube.backToCube}
               </button>
               <p className="text-[0.68rem] tracking-[0.22em] text-electric-soft uppercase">
-                Face · {open.short}
+                {t.cube.faceLabel} · {open.short}
               </p>
             </div>
             <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 pb-16 sm:px-8">
@@ -422,12 +435,16 @@ export function CubeWorld() {
               <p className="mt-5 max-w-2xl text-lg text-white/70 sm:text-xl">
                 {open.copy}
               </p>
-              <ul className="mt-8 space-y-3 border-l border-electric/50 pl-5">
+              <ul className="mt-8 space-y-3 border-s border-electric/50 ps-5">
                 {open.detail.map((line) => (
-                  <li key={line} className="text-sm leading-relaxed text-white/75 sm:text-base">
-                    {line.includes("georgegad.com") ? (
+                  <li
+                    key={line}
+                    className="text-sm leading-relaxed text-white/75 sm:text-base"
+                  >
+                    {line.includes("georgegad.com") &&
+                    !line.includes("@") ? (
                       <>
-                        Led by George Gad ·{" "}
+                        {line.split("georgegad.com")[0]}
                         <Link
                           href="https://georgegad.com"
                           target="_blank"
@@ -435,8 +452,8 @@ export function CubeWorld() {
                           className="text-electric-soft underline underline-offset-4"
                         >
                           georgegad.com
-                        </Link>{" "}
-                        · Athens, Greece.
+                        </Link>
+                        {line.split("georgegad.com")[1]}
                       </>
                     ) : line.includes("@") ? (
                       <a
@@ -458,12 +475,12 @@ export function CubeWorld() {
                   </li>
                 ))}
               </ul>
-              {open.id === "contact" && (
+              {openId === "contact" && (
                 <div className="mt-10 max-w-xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm sm:p-6">
-                  <ContactForm />
+                  <ContactForm t={t.contactForm} />
                 </div>
               )}
-              {open.id !== "contact" && (
+              {openId !== "contact" && (
                 <button
                   type="button"
                   onClick={() => {
@@ -472,7 +489,7 @@ export function CubeWorld() {
                   }}
                   className="mt-10 inline-flex h-12 w-fit items-center bg-electric px-6 text-[0.72rem] tracking-[0.16em] text-white uppercase transition hover:bg-white hover:text-navy"
                 >
-                  Brief this face
+                  {t.cube.briefFace}
                 </button>
               )}
             </div>

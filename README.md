@@ -1,22 +1,28 @@
 # Kyvelon
 
-Full-screen **κύβος** cube website for Kyvelon — software, websites, automation, and digital services. Founded by [George Gad](https://georgegad.com) in Athens.
+Full-screen **κύβος** cube website for Kyvelon — software, websites, automation, and digital services from Athens. Founded by [George Gad](https://georgegad.com).
 
 ## Experience
 
-The whole viewport *is* the cube UI:
+1. **Cube stage** — drag to rotate, enter any of six faces
+2. **Story depth** — origin, connections between faces, founder, method, close CTA
+3. **Footer** — classic site footer with contact and language switcher
 
-- Drag anywhere to rotate the 3D cube
-- Click a face (or use the chips) to enter a full-screen face room
-- Esc / “Back to cube” returns to the stage
-- Contact face includes the brief form
+## Languages (i18n)
 
-Brand palette from the logo: electric blue `#0038F8` and navy `#06102B`.
+| Code | Language | Direction |
+| ---- | -------- | --------- |
+| `en` | English  | LTR       |
+| `el` | Ελληνικά | LTR       |
+| `ar` | العربية  | RTL       |
+
+Routes: `/en`, `/el`, `/ar` (root `/` redirects from `Accept-Language`).
 
 ## Stack
 
 - Next.js (App Router) + TypeScript
 - Tailwind CSS + shadcn/ui
+- Custom dictionaries under `src/i18n/`
 
 ## Run locally
 
@@ -26,12 +32,3 @@ npm run dev
 ```
 
 Open [http://localhost:4317](http://localhost:4317).
-
-## Scripts
-
-| Command         | Description             |
-| --------------- | ----------------------- |
-| `npm run dev`   | Dev server on port 4317 |
-| `npm run build` | Production build        |
-| `npm run start` | Start production server |
-| `npm run lint`  | ESLint                  |
