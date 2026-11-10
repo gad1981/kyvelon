@@ -149,6 +149,16 @@
   }
 }
 
+@keyframes cube-yaw {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2.5deg);
+  }
+}
+
 @keyframes float-y {
   0%,
   100% {
