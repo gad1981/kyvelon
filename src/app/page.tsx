@@ -1,32 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ContactForm } from "@/components/contact-form";
-import { HeroCube } from "@/components/hero-cube";
+import { CubeInterface } from "@/components/cube-interface";
 import { IsoGrid } from "@/components/iso-grid";
 import { SiteHeader } from "@/components/site-header";
+import { CUBE_FACES } from "@/lib/cube-faces";
 
-const faces = [
-  {
-    face: "01",
-    title: "Software creation",
-    copy: "Custom products and platforms engineered as durable building blocks — clear architecture, sharp UX, room to scale.",
-  },
-  {
-    face: "02",
-    title: "Websites & digital products",
-    copy: "Brand-led sites and product surfaces that convert. Fast, structured, and ready for the channels your customers live in.",
-  },
-  {
-    face: "03",
-    title: "Automation",
-    copy: "Workflows that remove friction: CRM flows, content ops, AI-assisted execution, and systems that keep teams moving.",
-  },
-  {
-    face: "04",
-    title: "Digital services",
-    copy: "Strategy through delivery — omnichannel growth, digital innovation, and go-to-market for brands that need results.",
-  },
-];
+const serviceFaces = [
+  CUBE_FACES.software,
+  CUBE_FACES.websites,
+  CUBE_FACES.automation,
+  CUBE_FACES.services,
+] as const;
 
 const method = [
   {
@@ -52,54 +37,44 @@ export default function Home() {
       <SiteHeader />
 
       <main className="flex-1">
-        {/* HERO — one composition, brand first, cube as visual plane */}
-        <section className="relative isolate min-h-[100svh] overflow-hidden">
+        {/* HERO — brand + real cube UX */}
+        <section
+          id="cube"
+          className="relative isolate min-h-[100svh] scroll-mt-20"
+        >
           <IsoGrid />
           <div className="absolute inset-0 bg-[linear-gradient(115deg,rgb(243_245_248_/_0.2)_0%,rgb(0_56_248_/_0.08)_42%,rgb(6_16_43_/_0.18)_100%)]" />
-          <div className="relative mx-auto grid min-h-[100svh] max-w-6xl items-center gap-10 px-5 pt-28 pb-16 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pt-24">
-            <div className="animate-face-in z-10 max-w-xl">
+          <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-center gap-10 px-5 pt-28 pb-16 sm:px-8 lg:pt-24">
+            <div className="animate-face-in z-10 max-w-2xl">
               <Image
                 src="/kyvelon-logo.png"
                 alt="Kyvelon"
                 width={708}
                 height={354}
                 priority
-                className="mb-8 w-[min(100%,320px)] sm:w-[360px]"
+                className="mb-7 w-[min(100%,300px)] sm:w-[340px]"
               />
-              <h1 className="font-display text-[clamp(2.35rem,6vw,4.4rem)] leading-[0.95] font-semibold tracking-[-0.03em] text-navy">
+              <h1 className="font-display text-[clamp(2.2rem,5.5vw,4rem)] leading-[0.95] font-semibold tracking-[-0.03em] text-navy">
                 Digital systems
                 <span className="block text-electric">built as cubes.</span>
               </h1>
-              <p className="mt-6 max-w-md text-base leading-relaxed text-navy/70 sm:text-lg">
-                Software, websites, automation, and digital services — structured
-                like κύβος. Every face precise. Every edge intentional.
+              <p className="mt-5 max-w-md text-base leading-relaxed text-navy/70 sm:text-lg">
+                Turn the cube. Click a face. Software, websites, automation, and
+                digital services — structured like κύβος.
               </p>
-              <div className="mt-9 flex flex-wrap gap-3">
-                <a
-                  href="#contact"
-                  className="inline-flex h-12 items-center bg-electric px-6 text-[0.75rem] tracking-[0.16em] text-white uppercase transition hover:bg-navy"
-                >
-                  Start a project
-                </a>
-                <a
-                  href="#faces"
-                  className="inline-flex h-12 items-center border border-navy/20 bg-white/50 px-6 text-[0.75rem] tracking-[0.16em] text-navy uppercase backdrop-blur-sm transition hover:border-electric hover:text-electric"
-                >
-                  Explore the faces
-                </a>
-              </div>
             </div>
+
             <div
-              className="animate-face-in relative z-10 flex items-center justify-center"
-              style={{ animationDelay: "120ms" }}
+              className="animate-face-in z-10"
+              style={{ animationDelay: "100ms" }}
             >
-              <HeroCube />
+              <CubeInterface />
             </div>
           </div>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-surface to-transparent" />
         </section>
 
-        {/* FACES — services as cube faces, not cards */}
+        {/* FACES — destinations for cube navigation */}
         <section id="faces" className="relative scroll-mt-20 py-24 sm:py-28">
           <div className="mx-auto max-w-6xl px-5 sm:px-8">
             <div className="max-w-2xl">
@@ -116,10 +91,11 @@ export default function Home() {
             </div>
 
             <div className="mt-14 grid gap-px bg-navy/10 sm:grid-cols-2">
-              {faces.map((item, index) => (
+              {serviceFaces.map((item, index) => (
                 <article
-                  key={item.face}
-                  className="group relative overflow-hidden bg-surface px-6 py-8 transition duration-500 hover:bg-navy sm:px-8 sm:py-10"
+                  key={item.id}
+                  id={`face-${item.id}`}
+                  className="group relative scroll-mt-24 overflow-hidden bg-surface px-6 py-8 transition duration-500 hover:bg-navy sm:px-8 sm:py-10"
                   style={{
                     clipPath:
                       index % 2 === 0
@@ -132,7 +108,7 @@ export default function Home() {
                     className="absolute -top-10 -right-8 h-36 w-36 rotate-12 bg-[linear-gradient(135deg,rgb(0_56_248_/_0.18),transparent)] transition duration-500 group-hover:bg-[linear-gradient(135deg,rgb(42_88_255_/_0.35),transparent)]"
                   />
                   <p className="font-display text-sm tracking-[0.2em] text-electric group-hover:text-electric-soft">
-                    Face {item.face}
+                    Face 0{index + 1} · {item.short}
                   </p>
                   <h3 className="font-display mt-4 text-2xl font-semibold tracking-[-0.02em] text-navy transition group-hover:text-white sm:text-3xl">
                     {item.title}
@@ -146,7 +122,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* METHOD — κύβος idea */}
+        {/* METHOD */}
         <section
           id="method"
           className="relative scroll-mt-20 overflow-hidden bg-navy py-24 text-white sm:py-28"
@@ -207,7 +183,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* FOUNDER — George Gad / georgegad.com */}
+        {/* FOUNDER */}
         <section id="founder" className="relative scroll-mt-20 py-24 sm:py-28">
           <div className="mx-auto grid max-w-6xl items-end gap-12 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div>

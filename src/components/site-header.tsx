@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const links = [
+  { href: "#cube", label: "Cube" },
   { href: "#faces", label: "Faces" },
   { href: "#method", label: "Method" },
   { href: "#founder", label: "Founder" },

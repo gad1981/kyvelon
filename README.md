@@ -28,4 +28,11 @@ Open [http://localhost:4317](http://localhost:4317).
 
 ## Concept
 
-The site is built around **κύβος** (cube): hero 3D cube, four service faces, and a Structure → Faces → Assemble method.
+The site is built around **κύβος** (cube). The hero is a real interactive cube UX:
+
+- Drag / touch to rotate
+- Click a face (or use the face chips) to snap and jump to that section
+- Active-face panel updates as you explore
+- Six faces: Software, Websites, Automation, Services, Method, Contact
+
+Below that: four service faces, Structure → Faces → Assemble method, founder, and contact.
