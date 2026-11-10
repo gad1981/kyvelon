@@ -118,7 +118,7 @@ const en: Dictionary = {
       },
       {
         title: "Athens as origin",
-        body: "Built in Greece, delivered across EMEA — local craft with regional scale, rooted in George Gad’s digital strategy practice.",
+        body: "Built in Greece, delivered across EMEA — local craft with regional scale, rooted in years of digital strategy practice.",
       },
     ],
     connectEyebrow: "The connections",
