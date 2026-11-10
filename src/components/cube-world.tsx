@@ -293,8 +293,8 @@ export function CubeWorld() {
           <Image
             src="/kyvelon-logo.png"
             alt="Kyvelon"
-            width={354}
-            height={177}
+            width={1256}
+            height={278}
             priority
             className="h-auto w-full"
           />
