@@ -127,29 +127,11 @@ export function SiteFooter({
             </li>
             <li>
               <a
-                href="mailto:georgiosgad@gmail.com"
-                className="transition hover:text-white"
-              >
-                georgiosgad@gmail.com
-              </a>
-            </li>
-            <li>
-              <a
                 href="tel:+306937027555"
                 className="transition hover:text-white"
               >
                 +30 6937 027 555
               </a>
-            </li>
-            <li>
-              <Link
-                href="https://georgegad.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition hover:text-white"
-              >
-                georgegad.com
-              </Link>
             </li>
           </ul>
         </div>
