@@ -12,19 +12,23 @@ export type CubeFace = {
   short: string;
   title: string;
   copy: string;
-  href: string;
+  detail: string[];
   tone: "navy" | "electric" | "deep" | "mid";
 };
 
-/** Six faces of the Kyvelon cube — the real navigation surface */
+/** Six faces of the Kyvelon cube — the whole-screen navigation surface */
 export const CUBE_FACES: Record<CubeFaceId, CubeFace> = {
   software: {
     id: "software",
     label: "Software",
     short: "SOFT",
     title: "Software creation",
-    copy: "Custom products and platforms engineered as durable building blocks — clear architecture, sharp UX, room to scale.",
-    href: "#face-software",
+    copy: "Custom products and platforms engineered as durable building blocks.",
+    detail: [
+      "Clear architecture, sharp UX, room to scale.",
+      "From concept through launch — products built to hold under pressure.",
+      "Athens-based delivery for EMEA brands that need speed without chaos.",
+    ],
     tone: "deep",
   },
   websites: {
@@ -32,8 +36,12 @@ export const CUBE_FACES: Record<CubeFaceId, CubeFace> = {
     label: "Websites",
     short: "WEB",
     title: "Websites & digital products",
-    copy: "Brand-led sites and product surfaces that convert. Fast, structured, and ready for the channels your customers live in.",
-    href: "#face-websites",
+    copy: "Brand-led sites and product surfaces that convert.",
+    detail: [
+      "Fast, structured, ready for the channels your customers live in.",
+      "Design systems that feel like Kyvelon: geometric, precise, memorable.",
+      "Launch surfaces that carry strategy into the browser.",
+    ],
     tone: "electric",
   },
   automation: {
@@ -41,8 +49,12 @@ export const CUBE_FACES: Record<CubeFaceId, CubeFace> = {
     label: "Automation",
     short: "AUTO",
     title: "Automation",
-    copy: "Workflows that remove friction: CRM flows, content ops, AI-assisted execution, and systems that keep teams moving.",
-    href: "#face-automation",
+    copy: "Workflows that remove friction and keep teams moving.",
+    detail: [
+      "CRM flows, content ops, and AI-assisted execution.",
+      "Systems that connect data, creative, and delivery.",
+      "Less manual drag — more compound growth.",
+    ],
     tone: "mid",
   },
   services: {
@@ -50,8 +62,12 @@ export const CUBE_FACES: Record<CubeFaceId, CubeFace> = {
     label: "Services",
     short: "SERV",
     title: "Digital services",
-    copy: "Strategy through delivery — omnichannel growth, digital innovation, and go-to-market for brands that need results.",
-    href: "#face-services",
+    copy: "Strategy through delivery for brands that need results.",
+    detail: [
+      "Omnichannel growth, digital innovation, and go-to-market.",
+      "16+ years across EMEA — P&G, Nestlé, Essity, and more.",
+      "Led by George Gad · georgegad.com · Athens, Greece.",
+    ],
     tone: "navy",
   },
   method: {
@@ -59,8 +75,12 @@ export const CUBE_FACES: Record<CubeFaceId, CubeFace> = {
     label: "Method",
     short: "κύβος",
     title: "The κύβος method",
-    copy: "Structure → Faces → Assemble. Build like a cube, not a pile — every edge intentional.",
-    href: "#method",
+    copy: "Structure → Faces → Assemble. Build like a cube, not a pile.",
+    detail: [
+      "δομή · Structure — define goals, users, data, constraints.",
+      "έδρες · Faces — cut each capability with precision, then stress-test.",
+      "σύνθεση · Assemble — lock faces into one system. Launch, measure, iterate.",
+    ],
     tone: "electric",
   },
   contact: {
@@ -69,7 +89,11 @@ export const CUBE_FACES: Record<CubeFaceId, CubeFace> = {
     short: "BRIEF",
     title: "Brief the next cube",
     copy: "Tell us what face you need first. We reply from Athens.",
-    href: "#contact",
+    detail: [
+      "georgiosgad@gmail.com",
+      "+30 6937 027 555",
+      "georgegad.com · Athens, Greece",
+    ],
     tone: "navy",
   },
 };
