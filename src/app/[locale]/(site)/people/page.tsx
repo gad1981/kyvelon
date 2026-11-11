@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { BrandLogo } from "@/components/brand-logo";
+import { SiteMenu } from "@/components/site-menu";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -12,10 +14,12 @@ export async function generateMetadata({
   const { locale: raw } = await params;
   if (!isLocale(raw)) return {};
   const t = await getDictionary(raw);
-  return {
-    title: `${t.people.title} · Kyvelon`,
+  return buildPageMetadata({
+    locale: raw,
+    path: "/people",
+    title: t.people.eyebrow,
     description: t.people.body,
-  };
+  });
 }
 
 export default async function PeoplePage({
@@ -32,13 +36,8 @@ export default async function PeoplePage({
   return (
     <main className="bg-surface">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 pt-8 sm:px-8">
-        <Link
-          href={`/${locale}`}
-          className="font-display text-lg tracking-[-0.02em] text-navy"
-        >
-          Kyvelon
-        </Link>
-        <LanguageSwitcher locale={locale} label={t.lang.label} />
+        <BrandLogo href={`/${locale}`} tone="color" width={128} />
+        <SiteMenu locale={locale} t={t} tone="light" />
       </div>
 
       <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">

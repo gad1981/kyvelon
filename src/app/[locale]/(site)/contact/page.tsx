@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BrandLogo } from "@/components/brand-logo";
 import { ContactForm } from "@/components/contact-form";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { SiteMenu } from "@/components/site-menu";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -13,10 +14,12 @@ export async function generateMetadata({
   const { locale: raw } = await params;
   if (!isLocale(raw)) return {};
   const t = await getDictionary(raw);
-  return {
-    title: `${t.contactPage.title} · Kyvelon`,
+  return buildPageMetadata({
+    locale: raw,
+    path: "/contact",
+    title: t.contactPage.eyebrow,
     description: t.contactPage.body,
-  };
+  });
 }
 
 export default async function ContactPage({
@@ -32,13 +35,8 @@ export default async function ContactPage({
   return (
     <main className="bg-navy text-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 pt-8 sm:px-8">
-        <Link
-          href={`/${locale}`}
-          className="font-display text-lg tracking-[-0.02em]"
-        >
-          Kyvelon
-        </Link>
-        <LanguageSwitcher locale={locale} label={t.lang.label} tone="dark" />
+        <BrandLogo href={`/${locale}`} tone="white" width={128} />
+        <SiteMenu locale={locale} t={t} tone="dark" />
       </div>
       <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:py-24">
         <div>

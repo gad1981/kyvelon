@@ -6,6 +6,10 @@ export type FaceCopy = {
   title: string;
   copy: string;
   detail: string[];
+  /** Short labels for the animated face graph (maps 1:1 to detail beats). */
+  graph: string[];
+  /** Optional hub / center label on the face graph (e.g. automation). */
+  graphHub?: string;
 };
 
 export type Dictionary = {
@@ -27,6 +31,15 @@ export type Dictionary = {
     faceLabel: string;
     briefFace: string;
     dragAria: string;
+    soundOn: string;
+    soundOff: string;
+    soundHint: string;
+    entering: string;
+    inside: string;
+    sideCopy: string;
+    sideGraph: string;
+    toGraph: string;
+    toCopy: string;
   };
   faces: Record<CubeFaceId, FaceCopy>;
   contactForm: {
@@ -69,6 +82,64 @@ export type Dictionary = {
     founderMeta: string;
     founderCta: string;
   };
+  work: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    readCase: string;
+    visitLive: string;
+    backToWork: string;
+    backHome: string;
+    facesUsed: string;
+  };
+  insights: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    readArticle: string;
+    backToInsights: string;
+    minRead: string;
+    sources: string;
+    takeaway: string;
+    relatedFace: string;
+    enterFace: string;
+    signalGraph: string;
+  };
+  caseFeedbackLoop: {
+    eyebrow: string;
+    product: string;
+    urlLabel: string;
+    url: string;
+    title: string;
+    summary: string;
+    heroSupport: string;
+    challengeEyebrow: string;
+    challengeTitle: string;
+    challengeBody: string;
+    challengeBefore: string;
+    challengeAfter: string;
+    structureEyebrow: string;
+    structureTitle: string;
+    structureBody: string;
+    systemEyebrow: string;
+    systemTitle: string;
+    systemBody: string;
+    systemPanels: { title: string; body: string }[];
+    loopEyebrow: string;
+    loopTitle: string;
+    loopSteps: { title: string; body: string }[];
+    facesEyebrow: string;
+    faces: { face: string; short: string; body: string }[];
+    assembleEyebrow: string;
+    assembleTitle: string;
+    assembleBody: string;
+    outcomes: { label: string; body: string }[];
+    stackEyebrow: string;
+    stackTitle: string;
+    stackItems: string[];
+    closeTitle: string;
+    closeBody: string;
+  };
   contactPage: {
     eyebrow: string;
     title: string;
@@ -87,6 +158,8 @@ export type Dictionary = {
     contact: string;
     theCube: string;
     people: string;
+    work: string;
+    insights: string;
     terms: string;
     startBrief: string;
     method: string;
@@ -94,7 +167,20 @@ export type Dictionary = {
     rights: string;
     tag: string;
   };
+  cookies: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    policy: string;
+    accept: string;
+    reject: string;
+  };
   lang: {
     label: string;
+  };
+  menu: {
+    open: string;
+    close: string;
+    title: string;
   };
 };

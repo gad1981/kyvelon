@@ -21,7 +21,11 @@ export function middleware(request: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname.includes(".")
+    pathname.includes(".") ||
+    pathname === "/opengraph-image" ||
+    pathname === "/twitter-image" ||
+    pathname.startsWith("/opengraph-image/") ||
+    pathname.startsWith("/twitter-image/")
   ) {
     return NextResponse.next();
   }

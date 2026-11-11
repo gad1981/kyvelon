@@ -19,6 +19,15 @@ const el: Dictionary = {
     backHome: "Αρχική",
     faceLabel: "Έδρα",
     briefFace: "Brief για αυτή την έδρα",
+    soundOn: "Ηχητικό τοπίο ενεργό",
+    soundOff: "Ηχητικό τοπίο",
+    soundHint: "Πατήστε για ambient ήχο στην είσοδο",
+    entering: "Είσοδος στον κύβο",
+    inside: "Μέσα στην έδρα",
+    sideCopy: "Κείμενο",
+    sideGraph: "Γράφημα",
+    toGraph: "Στο γράφημα →",
+    toCopy: "← Πίσω στο κείμενο",
     dragAria:
       "Κόσμος κύβου Kyvelon. Σύρετε για περιστροφή. Πατήστε μια έδρα για είσοδο.",
   },
@@ -31,8 +40,9 @@ const el: Dictionary = {
       detail: [
         "Καθαρή αρχιτεκτονική, αιχμηρό UX, χώρος για κλίμακα.",
         "Από την ιδέα έως το launch — προϊόντα που αντέχουν πίεση.",
-        "Παράδοση από Αθήνα για brands EMEA που θέλουν ταχύτητα χωρίς χάος.",
+        "Αρθρωτές πλατφόρμες που μεγαλώνουν με το brief — ταχύτητα χωρίς χάος.",
       ],
+      graph: ["Αρχιτεκτονική", "UX", "Κλίμακα"],
     },
     websites: {
       label: "Ιστότοποι",
@@ -41,9 +51,10 @@ const el: Dictionary = {
       copy: "Brand-led επιφάνειες που μετατρέπουν επισκέπτες σε αποτέλεσμα.",
       detail: [
         "Γρήγορα, δομημένα, έτοιμα για τα κανάλια των πελατών σας.",
-        "Design systems με αίσθηση Kyvelon: γεωμετρία, ακρίβεια, μνήμη.",
+        "Design systems με γεωμετρία, ακρίβεια και μνήμη.",
         "Επιφάνειες launch που μεταφέρουν τη στρατηγική στο browser.",
       ],
+      graph: ["Επιφάνεια", "Σύστημα", "Μετατροπή"],
     },
     automation: {
       label: "Αυτοματισμός",
@@ -53,19 +64,23 @@ const el: Dictionary = {
       detail: [
         "CRM flows, content ops και AI-assisted εκτέλεση.",
         "Συστήματα που συνδέουν δεδομένα, creative και παράδοση.",
-        "Λιγότερη χειροκίνητη φθορά — περισσότερη σύνθετη ανάπτυξη.",
+        "Λιγότερη χειροκίνητη φθορά — περισσότερη σύνθετη ανάπτυξη μέσω agentic marketing.",
       ],
+      graph: ["CRM", "Ops", "Ανάπτυξη"],
+      graphHub: "Agentic marketing",
     },
     services: {
       label: "Υπηρεσίες",
       short: "SERV",
       title: "Ψηφιακές υπηρεσίες",
-      copy: "Από στρατηγική έως παράδοση για brands που θέλουν αποτέλεσμα.",
+      copy: "Ανθρώπινη στρατηγική που κατευθύνει το σύστημα προς εμπορικό αποτέλεσμα.",
       detail: [
-        "Omnichannel growth, ψηφιακή καινοτομία και go-to-market.",
-        "16+ χρόνια σε EMEA — P&G, Nestlé, Essity και άλλα.",
-        "Με τον George Gad · georgegad.com · Αθήνα, Ελλάδα.",
+        "Go-to-market, campaigns και loyalty που αποφασίζουν τι πρέπει να κάνει ο κύβος μετά.",
+        "Ψηφιακή καινοτομία δεμένη με αποτελέσματα — όχι παρουσιάσεις σε συρτάρι.",
+        "Ένα engagement: brief, χτίσιμο, μέτρηση, επανάληψη μέχρι να κλειδώσουν οι έδρες.",
       ],
+      graph: ["Στρατηγική", "Campaigns", "Παράδοση"],
+      graphHub: "Αποτέλεσμα",
     },
     method: {
       label: "Μέθοδος",
@@ -77,6 +92,7 @@ const el: Dictionary = {
         "έδρες · κόβουμε κάθε ικανότητα με ακρίβεια και τη δοκιμάζουμε.",
         "σύνθεση · οι έδρες κλειδώνουν σε ένα σύστημα. Launch, μέτρηση, επανάληψη.",
       ],
+      graph: ["δομή", "έδρες", "σύνθεση"],
     },
     contact: {
       label: "Επαφή",
@@ -88,6 +104,7 @@ const el: Dictionary = {
         "+30 6937 027 555",
         "georgegad.com · Αθήνα, Ελλάδα",
       ],
+      graph: ["Brief", "Απάντηση", "Χτίσιμο"],
     },
   },
   contactForm: {
@@ -139,7 +156,7 @@ const el: Dictionary = {
       {
         from: "Αυτοματισμός",
         to: "Υπηρεσίες",
-        body: "Τα έξυπνα συστήματα χρειάζονται ανθρώπινη στρατηγική — campaigns, loyalty, go-to-market.",
+        body: "Τα agentic συστήματα χρειάζονται ανθρώπινη στρατηγική — campaigns, loyalty και go-to-market.",
       },
       {
         from: "Υπηρεσίες",
@@ -174,6 +191,142 @@ const el: Dictionary = {
       "Φέρτε το brief. Θα χαρτογραφήσουμε μαζί τον κύβο — και θα χτίσουμε την έδρα που ξεκλειδώνει τις υπόλοιπες.",
     closeCta: "Πίσω στον κύβο",
   },
+  work: {
+    eyebrow: "Έργα",
+    title: "Κύβοι που παραδόθηκαν.",
+    body: "Πραγματικά προϊόντα με τη μέθοδο κύβος — λογισμικό, επιφάνεια, αυτοματισμός και στρατηγική σε ένα σύστημα.",
+    readCase: "Διαβάστε το case",
+    visitLive: "Δείτε το live προϊόν",
+    backToWork: "Όλα τα έργα",
+    backHome: "Αρχική",
+    facesUsed: "Έδρες που χρησιμοποιήθηκαν",
+  },
+  insights: {
+    eyebrow: "Αναλύσεις",
+    title: "Σήματα που κατευθύνουν τον κύβο.",
+    body: "Βαθιές αναλύσεις για AI σε παραγωγή, agentic αυτοματισμό, custom software και ψηφιακά συστήματα — με πρωτογενείς πηγές και λέξεις-κλειδιά που αναζητούν οι αγοραστές.",
+    readArticle: "Διαβάστε το άρθρο",
+    backToInsights: "Όλες οι αναλύσεις",
+    minRead: "λεπτά",
+    sources: "Πηγές",
+    takeaway: "Συμπέρασμα",
+    relatedFace: "Σχετική έδρα",
+    enterFace: "Είσοδος στην έδρα",
+    signalGraph: "Χάρτης σήματος",
+  },
+  caseFeedbackLoop: {
+    eyebrow: "Case study",
+    product: "Feedback Loop",
+    urlLabel: "feedbackloop.studio",
+    url: "https://www.feedbackloop.studio",
+    title: "Ασφαλή feedback loops για ημιτελή μουσική.",
+    summary:
+      "Η Kyvelon σχεδίασε και παρέδωσε το Feedback Loop — ένα ιδιωτικό προϊόν όπου μουσικοί μοιράζονται demos, λαμβάνουν timestamped feedback και βελτιώνουν έκδοση προς έκδοση χωρίς public feeds.",
+    heroSupport:
+      "Πλήρης υλοποίηση κύβου: λογισμικό, επιφάνεια, αυτοματισμός και στρατηγική — live στο feedbackloop.studio.",
+    challengeEyebrow: "Το brief",
+    challengeTitle: "Οι creators ήθελαν feedback χωρίς έκθεση.",
+    challengeBody:
+      "Τα ημιτελή tracks δεν ανήκουν σε social feeds. Χρειάζονταν ένα ήρεμο σύστημα: ακρόαση μόνο με πρόσκληση, σχόλια στο timeline, ιστορικό εκδόσεων και AI ανάλυση που δεν εκπαιδεύεται στο έργο τους. Η ιδιωτικότητα δεν ήταν feature — ήταν ο όγκος του κύβου.",
+    challengeBefore: "Public feeds · likes · διαρροές demos",
+    challengeAfter: "Ιδιωτικά pools · timestamped notes · δικό σας IP",
+    structureEyebrow: "δομή · Structure",
+    structureTitle: "Ορίζουμε τον κύβο πριν κόψουμε έδρες.",
+    structureBody:
+      "Στόχοι: ιδιωτική συνεργασία και μετρήσιμη βελτίωση. Χρήστες: producers, songwriters, έμπιστοι κύκλοι. Περιορισμοί: χωρίς public discovery, άμεση ανάκληση πρόσβασης, credits που επιβραβεύουν το feedback, GDPR έλεγχος στο audio.",
+    systemEyebrow: "Το σύστημα προϊόντος",
+    systemTitle: "Κάθε ακμή σχεδιασμένη — από το waveform έως το credit.",
+    systemBody:
+      "Το προϊόν είναι ο κύβος σε πράξη: timeline feedback, ιστορικό εκδόσεων, ιδιωτικά pools και AI ανάλυση έξω από την πνευματική ιδιοκτησία του καλλιτέχνη.",
+    systemPanels: [
+      {
+        title: "Timestamped σχόλια",
+        body: "Καρφίτσα στο ακριβές σημείο του track — όχι «γύρω στο 1:30».",
+      },
+      {
+        title: "Ιστορικό εκδόσεων",
+        body: "Rough demo → drums → final mix. Η πρόοδος φαίνεται, δεν χάνεται σε chats.",
+      },
+      {
+        title: "Ιδιωτικά pools",
+        body: "Προσκαλείτε μόνο όσους εμπιστεύεστε. Ανάκληση άμεσα. Ο κύκλος είναι η επιφάνεια.",
+      },
+      {
+        title: "AI producer pass",
+        body: "Άμεσες ιδέες mix και arrangement στο timeline — πριν ακούσουν άνθρωποι το demo.",
+      },
+    ],
+    loopEyebrow: "Το loop",
+    loopTitle: "Upload. Invite. Improve.",
+    loopSteps: [
+      {
+        title: "Ανεβάστε demo",
+        body: "Ξεκινήστε ημιτελές. Οποιοδήποτε audio. Rough mixes ευπρόσδεκτα.",
+      },
+      {
+        title: "Προσκαλέστε τον κύκλο",
+        body: "Μοιραστείτε με μουσικούς που εμπιστεύεστε. Πλήρης έλεγχος ακρόασης.",
+      },
+      {
+        title: "Βελτιώστε κάθε έκδοση",
+        body: "Δράστε στα σχόλια, ανεβάστε ξανά, αφήστε το loop να συνθέτει αξία.",
+      },
+    ],
+    facesEyebrow: "Έδρες που υλοποιήθηκαν",
+    faces: [
+      {
+        face: "Λογισμικό",
+        short: "SOFT",
+        body: "Πυρήνας προϊόντος — uploads, pools, versions, credits, auth και Stripe Pro — ως ανθεκτικά δομικά στοιχεία.",
+      },
+      {
+        face: "Ιστότοποι",
+        short: "WEB",
+        body: "Brand-led επιφάνεια που μετατρέπει μουσικούς: υπόσχεση, pricing, FAQ και είσοδος στο προϊόν χωρίς θόρυβο.",
+      },
+      {
+        face: "Αυτοματισμός",
+        short: "AUTO",
+        body: "AI feedback στο timeline, referral credit loops και ops που κρατούν τη συνεργασία σε κίνηση.",
+      },
+      {
+        face: "Υπηρεσίες",
+        short: "SERV",
+        body: "Θέση και go-to-market για μια κατηγορία που δεν υπήρχε ακόμη — ιδιωτικό music feedback ως προϊόν, όχι social network.",
+      },
+    ],
+    assembleEyebrow: "σύνθεση · Assemble",
+    assembleTitle: "Οι έδρες κλείδωσαν. Το loop παραδόθηκε.",
+    assembleBody:
+      "Λογισμικό, επιφάνεια, αυτοματισμός και στρατηγική συναντιούνται: ο μουσικός ανεβάζει demo, προσκαλεί κύκλο, δρα σε timestamped σχόλια και παραδίδει καλύτερη έκδοση — ιδιωτικά.",
+    outcomes: [
+      {
+        label: "Προϊόν",
+        body: "Live SaaS στο feedbackloop.studio — Free και Pro, pools, AI feedback, referrals.",
+      },
+      {
+        label: "Ιδιωτικότητα",
+        body: "Πρόσβαση με πρόσκληση, ανάκληση ανά πάσα στιγμή, χωρίς AI training στα tracks, κρυπτογραφημένο audio, GDPR.",
+      },
+      {
+        label: "Loop",
+        body: "Τα credits επιβραβεύουν το feedback — η ανάπτυξη ενισχύεται από συνεισφορά, όχι vanity metrics.",
+      },
+    ],
+    stackEyebrow: "Delivery stack",
+    stackTitle: "Παραδόθηκε ως πλήρες ψηφιακό σύστημα.",
+    stackItems: [
+      "Next.js product + marketing surface",
+      "Auth, credits, pools, versioned audio",
+      "AI feedback pipeline",
+      "Stripe Pro billing",
+      "Referral growth loop",
+      "Privacy-first data posture",
+    ],
+    closeTitle: "Χρειάζεστε έναν κύβο που αντέχει πίεση;",
+    closeBody:
+      "Το Feedback Loop είναι μία έδρα όσων χτίζει η Kyvelon. Φέρτε το επόμενο brief — θα χαρτογραφήσουμε το σύστημα μαζί.",
+  },
   people: {
     eyebrow: "Άνθρωποι",
     title: "Οι άνθρωποι πίσω από τον κύβο.",
@@ -190,7 +343,7 @@ const el: Dictionary = {
   contactPage: {
     eyebrow: "Επαφή",
     title: "Στείλτε το επόμενο brief.",
-    body: "Πείτε μας ποια έδρα χρειάζεστε πρώτα — προϊόν, site, αυτοματισμός ή πλήρες σύστημα. Απαντάμε από Αθήνα.",
+    body: "Πείτε μας ποια έδρα χρειάζεστε πρώτα — λογισμικό, ιστότοποι, αυτοματισμός, υπηρεσίες ή πλήρες σύστημα. Απαντάμε από Αθήνα.",
   },
   terms: {
     eyebrow: "Νομικά",
@@ -227,6 +380,8 @@ const el: Dictionary = {
     contact: "Επαφή",
     theCube: "Ο κύβος",
     people: "Άνθρωποι",
+    work: "Έργα",
+    insights: "Αναλύσεις",
     terms: "Όροι χρήσης",
     startBrief: "Ξεκινήστε brief",
     method: "Η μέθοδος κύβος",
@@ -234,8 +389,21 @@ const el: Dictionary = {
     rights: "© 2026 Kyvelon. Με επιφύλαξη παντός δικαιώματος.",
     tag: "κύβος · Ψηφιακά συστήματα από Αθήνα",
   },
+  cookies: {
+    eyebrow: "Cookies",
+    title: "Χρησιμοποιούμε cookies για να μετράμε τον κύβο.",
+    body: "Τα analytics cookies μας βοηθούν να κατανοήσουμε πώς κινείστε στην Kyvelon. Τα απαραίτητα cookies κρατούν τον ιστότοπο σε λειτουργία. Μπορείτε να αποδεχτείτε ή να απορρίψετε τα analytics — η επιλογή αποθηκεύεται σε αυτή τη συσκευή.",
+    policy: "Όροι & απόρρητο",
+    accept: "Αποδοχή",
+    reject: "Απόρριψη",
+  },
   lang: {
     label: "Γλώσσα",
+  },
+  menu: {
+    open: "Άνοιγμα μενού",
+    close: "Κλείσιμο",
+    title: "Μενού",
   },
 };
 

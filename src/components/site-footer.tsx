@@ -1,6 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { BrandLogo } from "@/components/brand-logo";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
 import { SERVICE_FACE_IDS } from "@/lib/cube-faces";
@@ -22,27 +21,10 @@ export function SiteFooter({
     >
       <div className="mx-auto grid max-w-6xl gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
         <div>
-          <Link href={`${home}#cube`} className="inline-flex items-center gap-3">
-            <Image
-              src="/cube-mark.svg"
-              alt=""
-              width={36}
-              height={36}
-              className="shrink-0"
-            />
-            <span className="font-display text-2xl tracking-[-0.02em]">
-              Kyvelon
-            </span>
-          </Link>
+          <BrandLogo href={`${home}#cube`} tone="white" width={148} />
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/55">
             {f.blurb}
           </p>
-          <LanguageSwitcher
-            locale={locale}
-            label={t.lang.label}
-            className="mt-6"
-            tone="dark"
-          />
         </div>
 
         <div>
@@ -90,6 +72,22 @@ export function SiteFooter({
                 className="text-sm text-white/65 transition hover:text-white"
               >
                 {f.people}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={`/${locale}/work`}
+                className="text-sm text-white/65 transition hover:text-white"
+              >
+                {f.work}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={`/${locale}/insights`}
+                className="text-sm text-white/65 transition hover:text-white"
+              >
+                {f.insights}
               </Link>
             </li>
             <li>

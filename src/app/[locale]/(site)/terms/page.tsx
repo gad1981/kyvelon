@@ -1,8 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { BrandLogo } from "@/components/brand-logo";
+import { SiteMenu } from "@/components/site-menu";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -12,10 +13,12 @@ export async function generateMetadata({
   const { locale: raw } = await params;
   if (!isLocale(raw)) return {};
   const t = await getDictionary(raw);
-  return {
-    title: `${t.terms.title} · Kyvelon`,
-    description: t.terms.sections[0]?.body,
-  };
+  return buildPageMetadata({
+    locale: raw,
+    path: "/terms",
+    title: t.terms.eyebrow,
+    description: t.terms.sections[0]?.body ?? t.meta.description,
+  });
 }
 
 export default async function TermsPage({
@@ -31,13 +34,8 @@ export default async function TermsPage({
   return (
     <main className="bg-surface">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 pt-8 sm:px-8">
-        <Link
-          href={`/${locale}`}
-          className="font-display text-lg tracking-[-0.02em] text-navy"
-        >
-          Kyvelon
-        </Link>
-        <LanguageSwitcher locale={locale} label={t.lang.label} />
+        <BrandLogo href={`/${locale}`} tone="color" width={128} />
+        <SiteMenu locale={locale} t={t} tone="light" />
       </div>
       <article className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
         <p className="text-[0.72rem] tracking-[0.22em] text-electric uppercase">

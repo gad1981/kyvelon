@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -10,8 +9,10 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { BrandLogo } from "@/components/brand-logo";
+import { CubeExitPortal } from "@/components/cube-portal";
 import { IsoGrid } from "@/components/iso-grid";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { SiteMenu } from "@/components/site-menu";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
 import {
@@ -19,6 +20,7 @@ import {
   FACE_ROTATIONS,
   type CubeFaceId,
 } from "@/lib/cube-faces";
+import { markCubeEntry } from "@/lib/cube-entry";
 import { cn } from "@/lib/utils";
 
 const TONE: Record<CubeFaceId, string> = {
@@ -44,6 +46,7 @@ export function CubeWorld({
   const [active, setActive] = useState<CubeFaceId>("software");
   const [dragging, setDragging] = useState(false);
   const [hint, setHint] = useState(true);
+  const [exiting, setExiting] = useState<CubeFaceId | null>(null);
   const rotRef = useRef(rot);
   const drag = useRef<{
     x: number;
@@ -56,6 +59,9 @@ export function CubeWorld({
   const idle = useRef(true);
   const frame = useRef<number | null>(null);
   const reduceMotion = useRef(false);
+  /** pending → decide rotate vs page-scroll; rotate only preventDefaults touch */
+  const gesture = useRef<"pending" | "rotate" | "scroll" | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     rotRef.current = rot;
@@ -115,19 +121,49 @@ export function CubeWorld({
 
   const enterFace = useCallback(
     (id: CubeFaceId) => {
+      if (exiting) return;
       snapTo(id);
-      router.push(`/${locale}/faces/${id}`);
+      markCubeEntry(id);
+      setExiting(id);
+      const delay = reduceMotion.current ? 120 : 1850;
+      window.setTimeout(() => {
+        router.push(`/${locale}/faces/${id}`);
+      }, delay);
     },
-    [locale, router, snapTo],
+    [exiting, locale, router, snapTo],
+  );
+
+  const endRotateGesture = useCallback(
+    (el: HTMLDivElement, pointerId: number, wasDrag: boolean) => {
+      drag.current = null;
+      gesture.current = null;
+      setDragging(false);
+      try {
+        if (el.hasPointerCapture?.(pointerId)) {
+          el.releasePointerCapture(pointerId);
+        }
+      } catch {
+        /* already released */
+      }
+      if (wasDrag) {
+        snapTo(nearestFace(rotRef.current.x, rotRef.current.y));
+        window.setTimeout(() => {
+          idle.current = true;
+        }, 2800);
+      } else {
+        idle.current = true;
+      }
+    },
+    [snapTo],
   );
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
     if ((e.target as HTMLElement).closest("[data-hud]")) return;
     idle.current = false;
-    setDragging(true);
     setHint(false);
-    e.currentTarget.setPointerCapture(e.pointerId);
+    gesture.current = "pending";
+    // Do not capture yet — let vertical pans scroll the page until we claim rotate.
     drag.current = {
       x: e.clientX,
       y: e.clientY,
@@ -138,10 +174,33 @@ export function CubeWorld({
   };
 
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (!drag.current) return;
+    if (!drag.current || gesture.current === "scroll") return;
+
     const dx = e.clientX - drag.current.x;
     const dy = e.clientY - drag.current.y;
-    if (Math.abs(dx) + Math.abs(dy) > 4) drag.current.moved = true;
+    const dist = Math.hypot(dx, dy);
+
+    if (gesture.current === "pending") {
+      if (dist < 10) return;
+      // Vertical-dominant → page scroll; horizontal / deliberate drag → cube
+      if (Math.abs(dy) > Math.abs(dx) * 1.1) {
+        gesture.current = "scroll";
+        drag.current = null;
+        idle.current = true;
+        return;
+      }
+      gesture.current = "rotate";
+      setDragging(true);
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
+    }
+
+    if (gesture.current !== "rotate") return;
+    e.preventDefault();
+    drag.current.moved = true;
     const next = {
       x: Math.max(-78, Math.min(78, drag.current.rotX - dy * 0.45)),
       y: drag.current.rotY + dx * 0.45,
@@ -151,34 +210,41 @@ export function CubeWorld({
   };
 
   const onPointerUp = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (!drag.current) return;
-    const wasDrag = drag.current.moved;
-    suppressClick.current = wasDrag;
-    drag.current = null;
-    setDragging(false);
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    } catch {
-      /* already released */
-    }
-    if (wasDrag) {
-      snapTo(nearestFace(rotRef.current.x, rotRef.current.y));
-      window.setTimeout(() => {
-        idle.current = true;
-      }, 2800);
-    } else {
+    if (gesture.current === "scroll" || gesture.current === "pending") {
+      // Tap or page-scroll: do not snap the cube
+      drag.current = null;
+      gesture.current = null;
       idle.current = true;
+      return;
     }
+    if (gesture.current !== "rotate") return;
+    const moved = Boolean(drag.current?.moved);
+    suppressClick.current = moved;
+    endRotateGesture(e.currentTarget, e.pointerId, moved);
   };
+
+  // Only while rotating: non-passive touchmove so the page does not scroll with the drag.
+  // Keep it off otherwise — a standing non-passive listener blocks page scroll on iOS.
+  useEffect(() => {
+    if (!dragging) return;
+    const el = stageRef.current;
+    if (!el) return;
+    const onTouchMove = (ev: TouchEvent) => {
+      if (gesture.current === "rotate") ev.preventDefault();
+    };
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", onTouchMove);
+  }, [dragging]);
 
   const face = t.faces[active];
 
   return (
     <div
       id="cube"
+      ref={stageRef}
       className={cn(
         "relative h-[100svh] w-full overflow-hidden bg-surface",
-        dragging ? "cursor-grabbing" : "cursor-grab",
+        dragging ? "cursor-grabbing touch-none" : "cursor-grab touch-pan-y",
       )}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -191,7 +257,10 @@ export function CubeWorld({
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(0_56_248_/_0.12),transparent_55%),linear-gradient(160deg,rgb(247_248_251)_0%,rgb(230_235_245)_100%)]" />
 
       <div
-        className="absolute inset-0 flex items-center justify-center"
+        className={cn(
+          "absolute inset-0 flex items-center justify-center transition duration-700",
+          exiting && "cube-world-dive",
+        )}
         style={{
           perspective: `${Math.round(size * 3.2)}px`,
           perspectiveOrigin: "50% 48%",
@@ -207,7 +276,9 @@ export function CubeWorld({
               transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`,
               transition: dragging
                 ? "none"
-                : "transform 520ms cubic-bezier(0.22, 1, 0.36, 1)",
+                : exiting
+                  ? "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)"
+                  : "transform 520ms cubic-bezier(0.22, 1, 0.36, 1)",
             }}
           >
             {FACE_ORDER.map((id) => (
@@ -269,28 +340,23 @@ export function CubeWorld({
         data-hud
         className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-4 p-5 sm:p-7"
       >
-        <div className="pointer-events-auto flex flex-col gap-3">
-          <Link href={`/${locale}#cube`} className="block w-[132px] sm:w-[168px]">
-            <Image
-              src="/kyvelon-logo.png"
-              alt="Kyvelon"
-              width={1256}
-              height={278}
-              priority
-              className="h-auto w-full"
-            />
-          </Link>
-          <LanguageSwitcher
-            locale={locale}
-            label={t.lang.label}
-            className="pointer-events-auto"
+        <div className="pointer-events-auto">
+          <BrandLogo
+            href={`/${locale}#cube`}
+            tone="color"
+            width={168}
+            priority
+            className="w-[120px] sm:w-[168px] [&_img]:w-full"
           />
         </div>
-        <div className="pointer-events-none max-w-[14rem] text-end sm:max-w-xs">
-          <p className="font-display text-lg leading-tight font-semibold tracking-[-0.03em] text-navy sm:text-2xl">
-            {t.brand.taglineLead}
-            <span className="block text-electric">{t.brand.taglineAccent}</span>
+        <div className="pointer-events-auto flex items-start gap-3">
+          <p className="pointer-events-none hidden max-w-[12rem] text-end sm:block sm:max-w-xs">
+            <span className="font-display text-lg leading-tight font-semibold tracking-[-0.03em] text-navy sm:text-2xl">
+              {t.brand.taglineLead}
+              <span className="block text-electric">{t.brand.taglineAccent}</span>
+            </span>
           </p>
+          <SiteMenu locale={locale} t={t} tone="light" />
         </div>
       </header>
 
@@ -356,6 +422,13 @@ export function CubeWorld({
           </nav>
         </div>
       </div>
+
+      <CubeExitPortal
+        active={Boolean(exiting)}
+        faceId={exiting ?? active}
+        label={exiting ? t.faces[exiting].short : face.short}
+        enteringLabel={t.cube.entering}
+      />
     </div>
   );
 }
