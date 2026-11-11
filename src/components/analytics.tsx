@@ -55,6 +55,6 @@ export function trackEvent(
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
-    dataLayer?: Record<string, unknown>[];
+    dataLayer?: Object[];
   }
 }
