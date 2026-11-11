@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { Dictionary } from "@/i18n/types";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export function ContactForm({ t }: { t: Dictionary["contactForm"] }) {
   const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
@@ -30,7 +31,7 @@ export function ContactForm({ t }: { t: Dictionary["contactForm"] }) {
 
     const subject = encodeURIComponent(`Kyvelon inquiry from ${name}`);
     const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`);
-    window.location.href = `mailto:georgiosgad@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
     setStatus("sent");
     form.reset();
   }

@@ -527,9 +527,12 @@ function LoopFlow({
           strokeDasharray="8 10"
           className="case-dash"
         />
-        <circle r="5" fill="#2a58ff">
-          <animateMotion dur="3.2s" repeatCount="indefinite" path="M20 20 H880" />
-        </circle>
+        <circle
+          r="5"
+          fill="#2a58ff"
+          className="safari-path-packet"
+          style={{ offsetPath: "path('M20 20 H880')" }}
+        />
       </svg>
       <ol className="grid gap-8 sm:grid-cols-3">
         {steps.map((step, i) => (
@@ -629,21 +632,25 @@ function AssembleViz({ className = "" }: { className?: string }) {
             strokeWidth="1.5"
           />
         </g>
-        <circle r="4" fill="#7aa0ff">
-          <animateMotion
-            dur="4s"
-            repeatCount="indefinite"
-            path="M120 78 C200 100, 260 140, 300 150"
-          />
-        </circle>
-        <circle r="4" fill="white">
-          <animateMotion
-            dur="4s"
-            repeatCount="indefinite"
-            begin="1s"
-            path="M520 78 C440 100, 380 140, 340 150"
-          />
-        </circle>
+        <circle
+          r="4"
+          fill="#7aa0ff"
+          className="safari-path-packet"
+          style={{
+            offsetPath: "path('M120 78 C200 100, 260 140, 300 150')",
+            animationDuration: "4s",
+          }}
+        />
+        <circle
+          r="4"
+          fill="white"
+          className="safari-path-packet"
+          style={{
+            offsetPath: "path('M520 78 C440 100, 380 140, 340 150')",
+            animationDuration: "4s",
+            animationDelay: "1s",
+          }}
+        />
       </svg>
     </div>
   );

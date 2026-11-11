@@ -100,7 +100,7 @@ const en: Dictionary = {
       title: "Brief the next cube",
       copy: "Tell us what face you need first. We reply from Athens.",
       detail: [
-        "georgiosgad@gmail.com",
+        "info@kyvelon.com",
         "+30 6937 027 555",
         "georgegad.com · Athens, Greece",
       ],
@@ -368,7 +368,7 @@ const en: Dictionary = {
       },
       {
         title: "Contact",
-        body: "Questions about these terms: georgiosgad@gmail.com · Athens, Greece.",
+        body: "Questions about these terms: info@kyvelon.com · Athens, Greece.",
       },
     ],
   },

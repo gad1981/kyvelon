@@ -47,6 +47,8 @@ export function CubeWorld({
   const [dragging, setDragging] = useState(false);
   const [hint, setHint] = useState(true);
   const [exiting, setExiting] = useState<CubeFaceId | null>(null);
+  /** CSS transform transition only while snapping — never during idle rAF spin (breaks Safari). */
+  const [snapAnimating, setSnapAnimating] = useState(false);
   const rotRef = useRef(rot);
   const drag = useRef<{
     x: number;
@@ -58,6 +60,7 @@ export function CubeWorld({
   const suppressClick = useRef(false);
   const idle = useRef(true);
   const frame = useRef<number | null>(null);
+  const snapTimer = useRef<number | null>(null);
   const reduceMotion = useRef(false);
   /** pending → decide rotate vs page-scroll; rotate only preventDefaults touch */
   const gesture = useRef<"pending" | "rotate" | "scroll" | null>(null);
@@ -84,6 +87,7 @@ export function CubeWorld({
   useEffect(() => {
     if (reduceMotion.current) return;
     const tick = () => {
+      // Skip while a snap CSS transition is running (idle ref is false then too).
       if (idle.current && !drag.current) {
         setRot((r) => {
           const next = { ...r, y: r.y + 0.2 };
@@ -96,6 +100,7 @@ export function CubeWorld({
     frame.current = requestAnimationFrame(tick);
     return () => {
       if (frame.current) cancelAnimationFrame(frame.current);
+      if (snapTimer.current) window.clearTimeout(snapTimer.current);
     };
   }, []);
 
@@ -114,6 +119,12 @@ export function CubeWorld({
     setActive(id);
     const base = FACE_ROTATIONS[id];
     const next = { x: base.x - 22, y: base.y + 28 };
+    setSnapAnimating(true);
+    if (snapTimer.current) window.clearTimeout(snapTimer.current);
+    snapTimer.current = window.setTimeout(() => {
+      setSnapAnimating(false);
+      snapTimer.current = null;
+    }, reduceMotion.current ? 0 : 560);
     setRot(next);
     rotRef.current = next;
     setHint(false);
@@ -273,12 +284,16 @@ export function CubeWorld({
               height: size,
               position: "relative",
               transformStyle: "preserve-3d",
+              WebkitTransformStyle: "preserve-3d",
               transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`,
+              // Idle spin is rAF; a standing CSS transition fights every tick on iOS Safari.
               transition: dragging
                 ? "none"
                 : exiting
                   ? "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)"
-                  : "transform 520ms cubic-bezier(0.22, 1, 0.36, 1)",
+                  : snapAnimating
+                    ? "transform 520ms cubic-bezier(0.22, 1, 0.36, 1)"
+                    : "none",
             }}
           >
             {FACE_ORDER.map((id) => (

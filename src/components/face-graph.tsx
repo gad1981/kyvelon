@@ -168,23 +168,59 @@ function HubBox({
   );
 }
 
+/** Path `d` by FlowPath id — used instead of SMIL <animateMotion> (unsupported in Safari). */
+const PACKET_PATHS: Record<string, string> = {
+  "sw-a": "M110 280 C110 230, 110 200, 110 170",
+  "sw-b": "M200 280 C200 230, 200 200, 200 170",
+  "sw-c": "M290 280 C290 230, 290 200, 290 170",
+  "sw-hub-c": "M200 148 C200 130, 200 115, 200 100",
+  "web-a": "M90 110 C120 150, 150 190, 175 230",
+  "web-b": "M200 110 C200 150, 200 190, 200 230",
+  "web-c": "M310 110 C280 150, 250 190, 225 230",
+  "web-out": "M200 268 C200 290, 200 305, 200 318",
+  "fg-flow-a": "M100 110 C140 110, 160 70, 180 70",
+  "fg-flow-b": "M220 70 C260 70, 280 130, 300 130",
+  "fg-flow-c": "M200 92 C200 140, 200 190, 200 232",
+  "sv-a": "M100 100 C140 130, 170 160, 190 210",
+  "sv-b": "M300 100 C260 130, 230 160, 210 210",
+  "sv-c": "M200 120 C200 150, 200 180, 200 215",
+  "sv-loop": "M120 300 C150 330, 250 330, 280 300",
+  "md-a": "M100 120 C140 140, 170 170, 190 210",
+  "md-b": "M300 120 C260 140, 230 170, 210 210",
+  "md-c": "M200 150 C200 170, 200 190, 200 215",
+  "ct-a": "M200 78 C200 110, 200 140, 200 168",
+  "ct-b": "M318 250 C280 235, 245 215, 220 200",
+  "ct-c": "M82 250 C120 235, 155 215, 180 200",
+  "ct-loop": "M200 55 A145 145 0 1 1 199.9 55",
+};
+
 function Packet({
   pathId,
+  path,
   color,
   dur,
   begin,
 }: {
-  pathId: string;
+  pathId?: string;
+  path?: string;
   color: string;
   dur: string;
   begin: string;
 }) {
+  const d = path ?? (pathId ? PACKET_PATHS[pathId] : undefined);
+  if (!d) return null;
   return (
-    <circle r="5" fill={color} filter="url(#fg-glow)">
-      <animateMotion dur={dur} repeatCount="indefinite" begin={begin}>
-        <mpath href={`#${pathId}`} />
-      </animateMotion>
-    </circle>
+    <circle
+      r="5"
+      fill={color}
+      filter="url(#fg-glow)"
+      className="safari-path-packet"
+      style={{
+        offsetPath: `path('${d}')`,
+        animationDuration: dur,
+        animationDelay: begin,
+      }}
+    />
   );
 }
 
@@ -384,9 +420,24 @@ function AutomationGraph({
         delay="0.4s"
       />
 
-      <Packet pathId="fg-flow-a" color="#2a58ff" dur="2.4s" begin="0.4s" />
-      <Packet pathId="fg-flow-b" color="#7aa0ff" dur="2.4s" begin="1.1s" />
-      <Packet pathId="fg-flow-c" color="white" dur="2.8s" begin="0.8s" />
+      <Packet
+        path="M100 110 C140 110, 160 70, 180 70"
+        color="#2a58ff"
+        dur="2.4s"
+        begin="0.4s"
+      />
+      <Packet
+        path="M220 70 C260 70, 280 130, 300 130"
+        color="#7aa0ff"
+        dur="2.4s"
+        begin="1.1s"
+      />
+      <Packet
+        path="M200 92 C200 140, 200 190, 200 232"
+        color="white"
+        dur="2.8s"
+        begin="0.8s"
+      />
 
       <NodeBox x={80} y={110} label={labels[0] ?? ""} delay="0.1s" />
       <NodeBox x={200} y={70} label={labels[1] ?? ""} delay="0.22s" />

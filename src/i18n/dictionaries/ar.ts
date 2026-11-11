@@ -99,7 +99,7 @@ const ar: Dictionary = {
       title: "أرسل المكعّب التالي",
       copy: "أخبرنا أي وجه تحتاجه أولًا. نردّ من أثينا.",
       detail: [
-        "georgiosgad@gmail.com",
+        "info@kyvelon.com",
         "+30 6937 027 555",
         "georgegad.com · أثينا، اليونان",
       ],
@@ -366,7 +366,7 @@ const ar: Dictionary = {
       },
       {
         title: "التواصل",
-        body: "أسئلة حول هذه الشروط: georgiosgad@gmail.com · أثينا، اليونان.",
+        body: "أسئلة حول هذه الشروط: info@kyvelon.com · أثينا، اليونان.",
       },
     ],
   },

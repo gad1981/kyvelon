@@ -5,6 +5,7 @@ import { SiteMenu } from "@/components/site-menu";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { buildPageMetadata } from "@/lib/seo";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -51,10 +52,10 @@ export default async function ContactPage({
             <li>{t.footer.location}</li>
             <li>
               <a
-                href="mailto:georgiosgad@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="hover:text-white"
               >
-                georgiosgad@gmail.com
+                {CONTACT_EMAIL}
               </a>
             </li>
             <li>

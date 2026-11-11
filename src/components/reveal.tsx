@@ -22,6 +22,13 @@ type RevealProps = {
   style?: CSSProperties;
 };
 
+function scheduleReveal(show: () => void) {
+  // Two frames: paint hidden state first so Safari actually runs the transition.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(show);
+  });
+}
+
 export function Reveal({
   children,
   className,
@@ -34,6 +41,7 @@ export function Reveal({
   const ref = useRef<HTMLElement | null>(null);
   const [ready, setReady] = useState(false);
   const [inView, setInView] = useState(false);
+  const shown = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -45,29 +53,51 @@ export function Reveal({
     if (reduce) {
       setReady(true);
       setInView(true);
+      shown.current = true;
       return;
     }
 
-    const rect = el.getBoundingClientRect();
-    const vh = window.innerHeight || 1;
-    if (rect.top < vh * 0.92 && rect.bottom > vh * 0.08) {
+    const show = () => {
+      if (shown.current && once) return;
+      shown.current = true;
       setInView(true);
-    }
+    };
+
     setReady(true);
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          if (once) io.disconnect();
-        } else if (!once) {
-          setInView(false);
-        }
-      },
-      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+    if (rect.top < vh * 0.94 && rect.bottom > vh * 0.02) {
+      scheduleReveal(show);
+    }
+
+    let io: IntersectionObserver | null = null;
+    try {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            scheduleReveal(show);
+            if (once) io?.disconnect();
+          } else if (!once) {
+            shown.current = false;
+            setInView(false);
+          }
+        },
+        // Pixel rootMargin — % margins are unreliable on WebKit.
+        { threshold: 0.05, rootMargin: "0px 0px -40px 0px" },
+      );
+      io.observe(el);
+    } catch {
+      scheduleReveal(show);
+    }
+
+    // Never leave content stuck at opacity 0 if IO never fires (iOS quirk).
+    const failsafe = window.setTimeout(() => scheduleReveal(show), 2200);
+
+    return () => {
+      io?.disconnect();
+      window.clearTimeout(failsafe);
+    };
   }, [once]);
 
   return (

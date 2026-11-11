@@ -100,7 +100,7 @@ const el: Dictionary = {
       title: "Στείλτε το επόμενο brief",
       copy: "Πείτε μας ποια έδρα χρειάζεστε πρώτα. Απαντάμε από Αθήνα.",
       detail: [
-        "georgiosgad@gmail.com",
+        "info@kyvelon.com",
         "+30 6937 027 555",
         "georgegad.com · Αθήνα, Ελλάδα",
       ],
@@ -368,7 +368,7 @@ const el: Dictionary = {
       },
       {
         title: "Επικοινωνία",
-        body: "Ερωτήσεις για τους όρους: georgiosgad@gmail.com · Αθήνα, Ελλάδα.",
+        body: "Ερωτήσεις για τους όρους: info@kyvelon.com · Αθήνα, Ελλάδα.",
       },
     ],
   },

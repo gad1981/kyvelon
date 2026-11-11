@@ -225,110 +225,53 @@
   animation: pulse-edge 3.2s ease-in-out infinite;
 }
 
-/* —— Story section scroll reveals —— */
+/* —— Story section scroll reveals (transitions: reliable on iOS Safari) —— */
+.story-reveal {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
 .story-reveal.is-ready:not(.is-in) {
   opacity: 0;
-  will-change: opacity, transform;
+  transition: none;
+}
+
+.story-reveal-up.is-ready:not(.is-in) {
+  transform: translate3d(0, 36px, 0);
+}
+
+.story-reveal-left.is-ready:not(.is-in) {
+  transform: translate3d(-28px, 0, 0);
+}
+
+.story-reveal-right.is-ready:not(.is-in) {
+  transform: translate3d(28px, 0, 0);
+}
+
+.story-reveal-scale.is-ready:not(.is-in) {
+  transform: translate3d(0, 18px, 0) scale(0.92);
+}
+
+.story-reveal-fade.is-ready:not(.is-in) {
+  transform: none;
 }
 
 .story-reveal.is-in {
-  animation-duration: 0.95s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  animation-fill-mode: both;
-  animation-delay: var(--reveal-delay, 0ms);
-}
-
-.story-reveal-up.is-in {
-  animation-name: story-rise;
-}
-
-.story-reveal-left.is-in {
-  animation-name: story-from-left;
-}
-
-.story-reveal-right.is-in {
-  animation-name: story-from-right;
-}
-
-.story-reveal-scale.is-in {
-  animation-name: story-scale-in;
-}
-
-.story-reveal-fade.is-in {
-  animation-name: story-fade-in;
-}
-
-@keyframes story-rise {
-  from {
-    opacity: 0;
-    transform: translateY(36px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes story-from-left {
-  from {
-    opacity: 0;
-    transform: translateX(-28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes story-from-right {
-  from {
-    opacity: 0;
-    transform: translateX(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes story-scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes story-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes story-rule-draw {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 @keyframes story-hex-breathe {
   0%,
   100% {
-    transform: translateY(0) scale(1);
-    filter: brightness(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translateY(-4px) scale(1.04);
-    filter: brightness(1.12);
+    transform: translate3d(0, -4px, 0) scale(1.04);
   }
 }
 
@@ -353,11 +296,16 @@
 .story-origin-rule {
   transform-origin: top;
   transform: scaleY(0);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.story-reveal.is-ready:not(.is-in) .story-origin-rule {
+  transition: none;
 }
 
 .story-reveal.is-in .story-origin-rule {
-  animation: story-rule-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--reveal-delay, 0ms) both;
+  transform: scaleY(1);
 }
 
 .story-method-grid {
@@ -1542,18 +1490,38 @@
   transform-box: fill-box;
 }
 
+/* Safari-safe motion along SVG paths (SMIL animateMotion is unsupported). */
+.safari-path-packet {
+  offset-rotate: 0deg;
+  -webkit-offset-rotate: 0deg;
+  animation: safari-path-packet 3.2s linear infinite;
+}
+
+@keyframes safari-path-packet {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .story-reveal,
+  .story-reveal.is-ready,
   .story-reveal.is-in,
-  .story-reveal.is-in .story-origin-rule {
+  .story-reveal.is-in .story-origin-rule,
+  .story-origin-rule {
     opacity: 1 !important;
     transform: none !important;
+    transition: none !important;
     animation: none !important;
   }
 
   .story-method-grid,
   .story-hex-live,
-  .story-cta-live {
+  .story-cta-live,
+  .safari-path-packet {
     animation: none !important;
   }
 
