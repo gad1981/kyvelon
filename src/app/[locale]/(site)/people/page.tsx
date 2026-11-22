@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BrandLogo } from "@/components/brand-logo";
-import { SiteMenu } from "@/components/site-menu";
+import { SiteHeader } from "@/components/site-header";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { buildPageMetadata } from "@/lib/seo";
@@ -34,13 +34,10 @@ export default async function PeoplePage({
   const p = t.people;
 
   return (
-    <main className="bg-surface">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 pt-8 sm:px-8">
-        <BrandLogo href={`/${locale}`} tone="color" width={128} />
-        <SiteMenu locale={locale} t={t} tone="light" />
-      </div>
+    <main className="relative bg-surface" data-nav-tone="light">
+      <SiteHeader locale={locale} t={t} tone="light" />
 
-      <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+      <div className="mx-auto max-w-6xl px-5 pt-28 pb-16 sm:px-8 sm:pt-32 sm:pb-24">
         <p className="text-[0.72rem] tracking-[0.22em] text-electric uppercase">
           {p.eyebrow}
         </p>
@@ -49,7 +46,18 @@ export default async function PeoplePage({
         </h1>
         <p className="mt-4 max-w-2xl text-navy/65">{p.body}</p>
 
-        <article className="mt-16 grid gap-10 border-t border-navy/10 pt-12 lg:grid-cols-[1.1fr_0.9fr]">
+        <article className="mt-16 grid gap-10 border-t border-navy/10 pt-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <figure className="relative aspect-square w-full max-w-md overflow-hidden bg-navy/5">
+            <Image
+              src="/people/george-gad.jpg"
+              alt={p.founderPhotoAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 420px"
+              className="object-cover"
+              priority
+            />
+          </figure>
+
           <div>
             <p className="text-[0.68rem] tracking-[0.2em] text-electric uppercase">
               {p.founderRole}
@@ -60,31 +68,21 @@ export default async function PeoplePage({
             <p className="mt-5 max-w-xl text-base leading-relaxed text-navy/70 sm:text-lg">
               {p.founderBio}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="https://georgegad.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-11 items-center bg-navy px-5 text-[0.7rem] tracking-[0.16em] text-white uppercase transition hover:bg-electric"
-              >
-                {p.founderCta}
-              </Link>
+            <p className="mt-6 border-s-2 border-electric ps-5 font-display text-xl leading-snug text-navy sm:text-2xl">
+              “{p.founderQuote}”
+            </p>
+            <p className="mt-4 text-[0.72rem] tracking-[0.18em] text-navy/50 uppercase">
+              {p.founderMeta}
+            </p>
+            <div className="mt-8">
               <Link
                 href={`/${locale}/contact`}
-                className="inline-flex h-11 items-center border border-navy/20 px-5 text-[0.7rem] tracking-[0.16em] text-navy uppercase transition hover:border-electric hover:text-electric"
+                className="inline-flex h-11 items-center bg-navy px-5 text-[0.7rem] tracking-[0.16em] text-white uppercase transition hover:bg-electric"
               >
                 {t.footer.startBrief}
               </Link>
             </div>
           </div>
-          <aside className="border-s-2 border-electric ps-6 sm:ps-8">
-            <p className="font-display text-xl leading-snug text-navy sm:text-2xl">
-              “{p.founderQuote}”
-            </p>
-            <p className="mt-6 text-[0.72rem] tracking-[0.18em] text-navy/50 uppercase">
-              {p.founderMeta}
-            </p>
-          </aside>
         </article>
       </div>
     </main>

@@ -52,7 +52,7 @@ export function CookieBanner({
           <p className="mt-2 text-sm leading-relaxed text-white/65">
             {t.body}{" "}
             <Link
-              href={`/${locale}/terms`}
+              href={`/${locale}/cookies`}
               className="text-electric-soft underline underline-offset-4 transition hover:text-white"
             >
               {t.policy}

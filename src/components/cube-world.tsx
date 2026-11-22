@@ -9,10 +9,9 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { BrandLogo } from "@/components/brand-logo";
 import { CubeExitPortal } from "@/components/cube-portal";
 import { IsoGrid } from "@/components/iso-grid";
-import { SiteMenu } from "@/components/site-menu";
+import { SiteHeader } from "@/components/site-header";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
 import {
@@ -253,6 +252,7 @@ export function CubeWorld({
     <div
       id="cube"
       ref={stageRef}
+      data-nav-tone="light"
       className={cn(
         "relative h-[100svh] w-full overflow-hidden bg-surface",
         dragging ? "cursor-grabbing touch-none" : "cursor-grab touch-pan-y",
@@ -351,29 +351,14 @@ export function CubeWorld({
         />
       </div>
 
-      <header
-        data-hud
-        className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-4 p-5 sm:p-7"
-      >
-        <div className="pointer-events-auto">
-          <BrandLogo
-            href={`/${locale}#cube`}
-            tone="color"
-            width={168}
-            priority
-            className="w-[120px] sm:w-[168px] [&_img]:w-full"
-          />
-        </div>
-        <div className="pointer-events-auto flex items-start gap-3">
-          <p className="pointer-events-none hidden max-w-[12rem] text-end sm:block sm:max-w-xs">
-            <span className="font-display text-lg leading-tight font-semibold tracking-[-0.03em] text-navy sm:text-2xl">
-              {t.brand.taglineLead}
-              <span className="block text-electric">{t.brand.taglineAccent}</span>
-            </span>
-          </p>
-          <SiteMenu locale={locale} t={t} tone="light" />
-        </div>
-      </header>
+      <SiteHeader
+        locale={locale}
+        t={t}
+        tone="light"
+        logoHref={`/${locale}#cube`}
+        priority
+        hud
+      />
 
       <div data-hud className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-6">
         <div className="mx-auto flex max-w-5xl flex-col gap-4">

@@ -1,13 +1,13 @@
 # Kyvelon
 
-Full-screen **κύβος** cube website for Kyvelon — software, websites, automation, and digital services from Athens. Founded by [George Gad](https://georgegad.com).
+Full-screen **κύβος** cube website for Kyvelon — software, websites, automation, and digital services from Athens.
 
 ## Experience
 
 1. **Home** (`/[locale]`) — cube stage + story + **site footer**
 2. **Face apps** (`/[locale]/faces/[face]`) — full-screen apps, **no footer**
 3. **Site pages** (with footer) — `/contact`, `/terms`, `/people`
-4. **Story** on home — origin, connections, method (founder lives on People)
+4. **Story** on home — origin, connections, method (owner photo on People)
 
 ## Languages (i18n)
 

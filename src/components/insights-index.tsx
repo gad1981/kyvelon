@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BrandLogo } from "@/components/brand-logo";
-import { SiteMenu } from "@/components/site-menu";
+import { SiteHeader } from "@/components/site-header";
 import { InsightHeroArt } from "@/components/insight-visuals";
 import {
   formatInsightDate,
@@ -22,11 +21,8 @@ export function InsightsIndex({
   const i = t.insights;
 
   return (
-    <main className="bg-navy text-white">
-      <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-4 px-5 pt-6 sm:px-8">
-        <BrandLogo href={`/${locale}`} tone="white" width={128} />
-        <SiteMenu locale={locale} t={t} tone="dark" />
-      </header>
+    <main className="bg-navy text-white" data-nav-tone="dark">
+      <SiteHeader locale={locale} t={t} tone="dark" />
 
       <section className="relative overflow-hidden border-b border-white/10 pt-28 pb-16 sm:pt-32 sm:pb-20">
         <InsightHeroArt tone="electric" short="INSIGHTS" />

@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BrandLogo } from "@/components/brand-logo";
-import { SiteMenu } from "@/components/site-menu";
+import { SiteHeader } from "@/components/site-header";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
 
@@ -18,22 +17,30 @@ export function CaseFeedbackLoop({
   const c = t.caseFeedbackLoop;
 
   return (
-    <main className="bg-surface text-navy">
-      <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-4 px-5 pt-6 sm:px-8">
-        <div className="flex items-center gap-4">
-          <BrandLogo href={`/${locale}`} tone="white" width={128} />
+    <main className="bg-surface text-navy" data-nav-tone="light">
+      <SiteHeader
+        locale={locale}
+        t={t}
+        tone="dark"
+        startExtra={(navTone) => (
           <Link
             href={`/${locale}/work`}
-            className="hidden text-[0.62rem] tracking-[0.16em] text-white/50 uppercase transition hover:text-white sm:inline"
+            className={
+              navTone === "dark"
+                ? "hidden text-[0.62rem] tracking-[0.16em] text-white/50 uppercase transition hover:text-white sm:inline"
+                : "hidden text-[0.62rem] tracking-[0.16em] text-navy/45 uppercase transition hover:text-navy sm:inline"
+            }
           >
             {w.backToWork}
           </Link>
-        </div>
-        <SiteMenu locale={locale} t={t} tone="dark" />
-      </header>
+        )}
+      />
 
       {/* Full-bleed hero */}
-      <section className="relative min-h-[100svh] overflow-hidden bg-navy text-white">
+      <section
+        data-nav-tone="dark"
+        className="relative min-h-[100svh] overflow-hidden bg-navy text-white"
+      >
         <Image
           src="/work/feedback-loop/hero.png"
           alt=""
@@ -169,7 +176,10 @@ export function CaseFeedbackLoop({
       </section>
 
       {/* Loop steps */}
-      <section className="relative overflow-hidden bg-navy py-20 text-white sm:py-28">
+      <section
+        data-nav-tone="dark"
+        className="relative overflow-hidden bg-navy py-20 text-white sm:py-28"
+      >
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-35"

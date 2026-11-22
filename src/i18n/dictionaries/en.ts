@@ -4,7 +4,7 @@ const en: Dictionary = {
   meta: {
     title: "Kyvelon — Digital systems built as cubes",
     description:
-      "Kyvelon builds software, websites, automation, and digital services from Athens. Founded by George Gad — structured systems for brands that need to move.",
+      "Kyvelon builds software, websites, automation, and digital services from Athens — structured systems for brands that need to move.",
   },
   brand: {
     taglineLead: "Digital systems",
@@ -102,7 +102,7 @@ const en: Dictionary = {
       detail: [
         "info@kyvelon.com",
         "+30 6937 027 555",
-        "georgegad.com · Athens, Greece",
+        "Athens, Greece",
       ],
       graph: ["Brief", "Reply", "Build"],
     },
@@ -330,15 +330,15 @@ const en: Dictionary = {
   people: {
     eyebrow: "People",
     title: "The people behind the cube.",
-    body: "Kyvelon is built by operators who have shipped strategy and systems across EMEA. Meet the founder who connects both.",
-    founderRole: "Founder",
+    body: "Kyvelon is built by operators who have shipped strategy and systems across EMEA.",
+    founderRole: "Owner",
     founderName: "George Gad",
     founderBio:
-      "Kyvelon is the delivery studio of georgegad.com — 16+ years leading digital strategy and innovation across EMEA for brands like P&G, Nestlé, and Essity. Data-led. Human-centered. Tech-fluent. From Athens, the same discipline that grew brands now ships software, sites, and automation you can run on.",
+      "Owner of Kyvelon. 16+ years leading digital strategy and innovation across EMEA for brands like P&G, Nestlé, and Essity. Data-led. Human-centered. Tech-fluent — shipping software, sites, and automation from Athens.",
     founderQuote:
       "In a digital, yet human world — structure is how ideas become systems that grow.",
-    founderMeta: "Athens, Greece · Digital strategy & innovation",
-    founderCta: "Visit georgegad.com",
+    founderMeta: "Athens, Greece · Owner, Kyvelon",
+    founderPhotoAlt: "George Gad, owner of Kyvelon",
   },
   contactPage: {
     eyebrow: "Contact",
@@ -352,7 +352,7 @@ const en: Dictionary = {
     sections: [
       {
         title: "About Kyvelon",
-        body: "Kyvelon provides digital services including software creation, websites, automation, and strategy delivery. These terms govern use of kyvelon digital properties and related inquiries.",
+        body: "Kyvelon provides digital services including software creation, websites, automation, and strategy delivery. These terms govern use of kyvelon.com and related inquiries.",
       },
       {
         title: "Services",
@@ -363,8 +363,8 @@ const en: Dictionary = {
         body: "Unless otherwise agreed, deliverables created for a client are assigned to that client upon full payment. Kyvelon retains rights to its pre-existing tools, methods, and brand assets.",
       },
       {
-        title: "Privacy",
-        body: "Contact details you send via forms or email are used only to respond to your inquiry and deliver services. We do not sell personal data.",
+        title: "Privacy & cookies",
+        body: "How we handle personal data and cookies is described in our Privacy policy and Cookie policy. Those pages form part of these terms by reference.",
       },
       {
         title: "Contact",
@@ -372,28 +372,80 @@ const en: Dictionary = {
       },
     ],
   },
+  privacy: {
+    eyebrow: "Legal",
+    title: "Privacy policy",
+    updated: "Last updated: November 2026",
+    sections: [
+      {
+        title: "Who we are",
+        body: "Kyvelon is a digital studio based in Athens, Greece. For privacy questions, contact info@kyvelon.com. Kyvelon is the controller of personal data processed through this website.",
+      },
+      {
+        title: "What we collect",
+        body: "When you send a brief or email, we process the details you provide (name, email, company, message, and any attachments).\n\nIf you accept analytics cookies, we also collect usage data such as pages viewed, approximate location, device/browser type, and referral source via Google Tag Manager / Google Analytics.",
+      },
+      {
+        title: "Why we process it",
+        body: "Inquiry data is processed to respond to your request and, where relevant, to prepare and deliver services (legitimate interest and/or steps prior to a contract).\n\nAnalytics data is processed only with your consent, to understand how the site is used and improve it.",
+      },
+      {
+        title: "Retention & sharing",
+        body: "We keep inquiry correspondence as long as needed to handle your request and our ordinary business records, then delete or anonymise it.\n\nWe do not sell personal data. Processors that help us run the site (for example email or analytics providers) act under our instructions and applicable safeguards.",
+      },
+      {
+        title: "Your rights",
+        body: "Depending on applicable law (including GDPR where it applies), you may request access, correction, deletion, restriction, or portability of your data, and you may object to certain processing or withdraw consent for analytics at any time.\n\nYou may also lodge a complaint with your local supervisory authority. In Greece that is the Hellenic Data Protection Authority (www.dpa.gr).",
+      },
+      {
+        title: "Contact",
+        body: "Privacy requests: info@kyvelon.com · Athens, Greece.",
+      },
+    ],
+  },
+  cookiePolicy: {
+    eyebrow: "Legal",
+    title: "Cookie policy",
+    updated: "Last updated: November 2026",
+    sections: [
+      {
+        title: "What cookies we use",
+        body: "Essential cookies (or similar local storage) remember your language preference and cookie consent choice so the site can function.\n\nAnalytics cookies load only if you accept them. They help us measure visits and navigation through Google Tag Manager / Google Analytics.",
+      },
+      {
+        title: "Your choice",
+        body: "When you first visit, a banner lets you accept or reject analytics. Your choice is stored on this device. Rejecting analytics does not block essential site features.\n\nTo change your mind later, clear site data for kyvelon.com in your browser (or remove the stored consent key) and reload the page — the banner will appear again.",
+      },
+      {
+        title: "More detail",
+        body: "For how analytics and inquiry data fit into our broader practices, see the Privacy policy. Questions: info@kyvelon.com.",
+      },
+    ],
+  },
   footer: {
     blurb:
       "Digital systems built as cubes — software, websites, automation, and digital services from Athens.",
     faces: "Faces",
-    company: "Company",
+    explore: "Explore",
     contact: "Contact",
     theCube: "The cube",
     people: "People",
     work: "Work",
     insights: "Insights",
-    terms: "Terms & conditions",
+    legal: "Legal",
+    terms: "Terms",
+    privacy: "Privacy",
+    cookies: "Cookies",
     startBrief: "Start a brief",
     method: "The κύβος method",
     location: "Athens, Greece",
     rights: "© 2026 Kyvelon. All rights reserved.",
-    tag: "κύβος · Digital systems from Athens",
   },
   cookies: {
     eyebrow: "Cookies",
     title: "We use cookies to measure the cube.",
     body: "Analytics cookies help us understand how visitors move through Kyvelon. Essential cookies keep the site working. You can accept or reject analytics — your choice is stored on this device.",
-    policy: "Terms & privacy",
+    policy: "Cookie policy",
     accept: "Accept",
     reject: "Reject",
   },

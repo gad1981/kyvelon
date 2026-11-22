@@ -15,7 +15,7 @@ export function StorySections({
   const c = t.caseFeedbackLoop;
 
   return (
-    <div className="relative bg-surface">
+    <div className="relative bg-surface" data-nav-tone="light">
       <section
         id="origin"
         className="scroll-mt-8 border-b border-navy/10 py-20 sm:py-28"
@@ -102,6 +102,7 @@ export function StorySections({
 
       <section
         id="method"
+        data-nav-tone="dark"
         className="relative scroll-mt-8 overflow-hidden bg-navy py-20 text-white sm:py-28"
       >
         <div

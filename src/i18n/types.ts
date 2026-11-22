@@ -80,7 +80,7 @@ export type Dictionary = {
     founderBio: string;
     founderQuote: string;
     founderMeta: string;
-    founderCta: string;
+    founderPhotoAlt: string;
   };
   work: {
     eyebrow: string;
@@ -151,21 +151,35 @@ export type Dictionary = {
     updated: string;
     sections: { title: string; body: string }[];
   };
+  privacy: {
+    eyebrow: string;
+    title: string;
+    updated: string;
+    sections: { title: string; body: string }[];
+  };
+  cookiePolicy: {
+    eyebrow: string;
+    title: string;
+    updated: string;
+    sections: { title: string; body: string }[];
+  };
   footer: {
     blurb: string;
     faces: string;
-    company: string;
+    explore: string;
     contact: string;
     theCube: string;
     people: string;
     work: string;
     insights: string;
+    legal: string;
     terms: string;
+    privacy: string;
+    cookies: string;
     startBrief: string;
     method: string;
     location: string;
     rights: string;
-    tag: string;
   };
   cookies: {
     eyebrow: string;

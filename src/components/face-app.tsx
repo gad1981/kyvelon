@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { BrandLogo } from "@/components/brand-logo";
 import { ContactForm } from "@/components/contact-form";
 import { FaceSoundToggle } from "@/components/face-atmosphere";
 import { CubeEnterSequence } from "@/components/cube-portal";
 import { CubeInteriorRoom } from "@/components/cube-interior";
 import { FaceGraph } from "@/components/face-graph";
-import { SiteMenu } from "@/components/site-menu";
+import { SiteHeader } from "@/components/site-header";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
 import { FACE_ORDER, type CubeFaceId } from "@/lib/cube-faces";
@@ -16,22 +15,6 @@ import { consumeCubeEntry } from "@/lib/cube-entry";
 import { cn } from "@/lib/utils";
 
 function DetailLine({ line }: { line: string }) {
-  if (line.includes("georgegad.com") && !line.includes("@")) {
-    return (
-      <>
-        {line.split("georgegad.com")[0]}
-        <Link
-          href="https://georgegad.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-electric-soft underline underline-offset-4"
-        >
-          georgegad.com
-        </Link>
-        {line.split("georgegad.com")[1]}
-      </>
-    );
-  }
   if (line.includes("@")) {
     return (
       <a href={`mailto:${line}`} className="hover:text-electric-soft">
@@ -191,23 +174,37 @@ export function FaceApp({
         />
       </div>
 
-      {/* HUD — floats in front of the volume */}
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-3 p-4 sm:p-5">
-        <div className="pointer-events-auto flex flex-wrap items-center gap-2">
-          <Link
-            href={`${home}#cube`}
-            className="inline-flex h-9 items-center border border-white/25 bg-black/35 px-3 text-[0.62rem] tracking-[0.16em] uppercase backdrop-blur-md transition hover:border-electric hover:text-electric-soft"
-          >
-            ← {t.cube.backToCube}
-          </Link>
-          <Link
-            href={home}
-            className="inline-flex h-9 items-center px-2 text-[0.62rem] tracking-[0.16em] text-white/45 uppercase transition hover:text-white"
-          >
-            {t.cube.backHome}
-          </Link>
-        </div>
-        <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
+      <SiteHeader
+        locale={locale}
+        t={t}
+        tone="dark"
+        logoHref={home}
+        hud
+        startExtra={(navTone) => (
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`${home}#cube`}
+              className={
+                navTone === "dark"
+                  ? "inline-flex h-9 items-center border border-white/25 bg-black/35 px-3 text-[0.62rem] tracking-[0.16em] uppercase backdrop-blur-md transition hover:border-electric hover:text-electric-soft"
+                  : "inline-flex h-9 items-center border border-navy/20 bg-white/70 px-3 text-[0.62rem] tracking-[0.16em] text-navy uppercase backdrop-blur-md transition hover:border-electric"
+              }
+            >
+              ← {t.cube.backToCube}
+            </Link>
+            <Link
+              href={home}
+              className={
+                navTone === "dark"
+                  ? "hidden h-9 items-center px-2 text-[0.62rem] tracking-[0.16em] text-white/45 uppercase transition hover:text-white sm:inline-flex"
+                  : "hidden h-9 items-center px-2 text-[0.62rem] tracking-[0.16em] text-navy/45 uppercase transition hover:text-navy sm:inline-flex"
+              }
+            >
+              {t.cube.backHome}
+            </Link>
+          </div>
+        )}
+        endExtra={
           <FaceSoundToggle
             key={faceId}
             faceId={faceId}
@@ -215,15 +212,8 @@ export function FaceApp({
             soundOffLabel={t.cube.soundOff}
             soundHint={t.cube.soundHint}
           />
-          <BrandLogo
-            href={home}
-            tone="white"
-            width={110}
-            className="hidden sm:block"
-          />
-          <SiteMenu locale={locale} t={t} tone="dark" />
-        </div>
-      </header>
+        }
+      />
 
       <nav
         className="absolute inset-x-0 bottom-0 z-30 flex gap-1.5 overflow-x-auto bg-gradient-to-t from-black/80 via-black/40 to-transparent px-4 pt-10 pb-3 [scrollbar-width:none] sm:gap-2 sm:px-5 sm:pb-4 [&::-webkit-scrollbar]:hidden"

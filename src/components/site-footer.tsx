@@ -3,6 +3,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
 import { SERVICE_FACE_IDS } from "@/lib/cube-faces";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export function SiteFooter({
   locale,
@@ -17,11 +18,12 @@ export function SiteFooter({
   return (
     <footer
       id="site-footer"
+      data-nav-tone="dark"
       className="relative z-10 border-t border-white/10 bg-navy text-white"
     >
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[1.35fr_1fr_1fr_1fr]">
         <div>
-          <BrandLogo href={`${home}#cube`} tone="white" width={148} />
+          <BrandLogo href={`${home}#cube`} tone="white" width={128} />
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/55">
             {f.blurb}
           </p>
@@ -47,31 +49,15 @@ export function SiteFooter({
 
         <div>
           <p className="text-[0.68rem] tracking-[0.2em] text-electric-soft uppercase">
-            {f.company}
+            {f.explore}
           </p>
           <ul className="mt-4 space-y-2.5">
             <li>
-              <a
+              <Link
                 href={`${home}#cube`}
                 className="text-sm text-white/65 transition hover:text-white"
               >
                 {f.theCube}
-              </a>
-            </li>
-            <li>
-              <a
-                href={`${home}#origin`}
-                className="text-sm text-white/65 transition hover:text-white"
-              >
-                {t.story.originEyebrow}
-              </a>
-            </li>
-            <li>
-              <Link
-                href={`/${locale}/people`}
-                className="text-sm text-white/65 transition hover:text-white"
-              >
-                {f.people}
               </Link>
             </li>
             <li>
@@ -91,19 +77,19 @@ export function SiteFooter({
               </Link>
             </li>
             <li>
-              <a
+              <Link
+                href={`/${locale}/people`}
+                className="text-sm text-white/65 transition hover:text-white"
+              >
+                {f.people}
+              </Link>
+            </li>
+            <li>
+              <Link
                 href={`${home}#method`}
                 className="text-sm text-white/65 transition hover:text-white"
               >
                 {f.method}
-              </a>
-            </li>
-            <li>
-              <Link
-                href={`/${locale}/terms`}
-                className="text-sm text-white/65 transition hover:text-white"
-              >
-                {f.terms}
               </Link>
             </li>
           </ul>
@@ -125,6 +111,14 @@ export function SiteFooter({
             </li>
             <li>
               <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="transition hover:text-white"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </li>
+            <li>
+              <a
                 href="tel:+306937027555"
                 className="transition hover:text-white"
               >
@@ -136,9 +130,31 @@ export function SiteFooter({
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-5 text-sm text-white/40 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-5 text-sm text-white/40 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <p>{f.rights}</p>
-          <p className="tracking-[0.12em] uppercase">{f.tag}</p>
+          <nav
+            aria-label={f.legal}
+            className="flex flex-wrap items-center gap-x-4 gap-y-2"
+          >
+            <Link
+              href={`/${locale}/terms`}
+              className="transition hover:text-white"
+            >
+              {f.terms}
+            </Link>
+            <Link
+              href={`/${locale}/privacy`}
+              className="transition hover:text-white"
+            >
+              {f.privacy}
+            </Link>
+            <Link
+              href={`/${locale}/cookies`}
+              className="transition hover:text-white"
+            >
+              {f.cookies}
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>

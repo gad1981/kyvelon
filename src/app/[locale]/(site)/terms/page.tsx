@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { BrandLogo } from "@/components/brand-logo";
-import { SiteMenu } from "@/components/site-menu";
+import { LegalDoc } from "@/components/legal-doc";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { buildPageMetadata } from "@/lib/seo";
@@ -16,7 +15,7 @@ export async function generateMetadata({
   return buildPageMetadata({
     locale: raw,
     path: "/terms",
-    title: t.terms.eyebrow,
+    title: t.terms.title,
     description: t.terms.sections[0]?.body ?? t.meta.description,
   });
 }
@@ -31,33 +30,5 @@ export default async function TermsPage({
   const locale = raw as Locale;
   const t = await getDictionary(locale);
 
-  return (
-    <main className="bg-surface">
-      <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 pt-8 sm:px-8">
-        <BrandLogo href={`/${locale}`} tone="color" width={128} />
-        <SiteMenu locale={locale} t={t} tone="light" />
-      </div>
-      <article className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
-        <p className="text-[0.72rem] tracking-[0.22em] text-electric uppercase">
-          {t.terms.eyebrow}
-        </p>
-        <h1 className="font-display mt-3 text-4xl font-semibold tracking-[-0.03em] text-navy sm:text-5xl">
-          {t.terms.title}
-        </h1>
-        <p className="mt-3 text-sm text-navy/50">{t.terms.updated}</p>
-        <div className="mt-12 space-y-10">
-          {t.terms.sections.map((section) => (
-            <section key={section.title}>
-              <h2 className="font-display text-xl font-semibold text-navy">
-                {section.title}
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-navy/70 sm:text-base">
-                {section.body}
-              </p>
-            </section>
-          ))}
-        </div>
-      </article>
-    </main>
-  );
+  return <LegalDoc locale={locale} t={t} doc={t.terms} />;
 }

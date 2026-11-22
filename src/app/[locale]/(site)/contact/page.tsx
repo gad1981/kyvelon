@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import { BrandLogo } from "@/components/brand-logo";
 import { ContactForm } from "@/components/contact-form";
-import { SiteMenu } from "@/components/site-menu";
+import { SiteHeader } from "@/components/site-header";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { buildPageMetadata } from "@/lib/seo";
@@ -34,12 +33,9 @@ export default async function ContactPage({
   const t = await getDictionary(locale);
 
   return (
-    <main className="bg-navy text-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 pt-8 sm:px-8">
-        <BrandLogo href={`/${locale}`} tone="white" width={128} />
-        <SiteMenu locale={locale} t={t} tone="dark" />
-      </div>
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:py-24">
+    <main className="relative bg-navy text-white" data-nav-tone="dark">
+      <SiteHeader locale={locale} t={t} tone="dark" />
+      <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-28 pb-16 sm:px-8 sm:pt-32 lg:grid-cols-[0.9fr_1.1fr] lg:pb-24">
         <div>
           <p className="text-[0.72rem] tracking-[0.22em] text-electric-soft uppercase">
             {t.contactPage.eyebrow}

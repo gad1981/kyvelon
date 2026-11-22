@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     template: "%s · Kyvelon",
   },
   description:
-    "Kyvelon builds software, websites, automation, and digital services from Athens. Founded by George Gad — structured systems for brands that need to move.",
+    "Kyvelon builds software, websites, automation, and digital services from Athens — structured systems for brands that need to move.",
   applicationName: "Kyvelon",
   authors: [{ name: "Kyvelon", url: "https://www.kyvelon.com" }],
   creator: "Kyvelon",
@@ -65,13 +65,13 @@ export const metadata: Metadata = {
     siteName: "Kyvelon",
     title: "Kyvelon — Digital systems built as cubes",
     description:
-      "Kyvelon builds software, websites, automation, and digital services from Athens. Founded by George Gad — structured systems for brands that need to move.",
+      "Kyvelon builds software, websites, automation, and digital services from Athens — structured systems for brands that need to move.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Kyvelon — Digital systems built as cubes",
     description:
-      "Kyvelon builds software, websites, automation, and digital services from Athens. Founded by George Gad — structured systems for brands that need to move.",
+      "Kyvelon builds software, websites, automation, and digital services from Athens — structured systems for brands that need to move.",
   },
   verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     ? {
