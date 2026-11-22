@@ -66,18 +66,6 @@ export function FaceApp({
     const failsafe = window.setTimeout(() => setPortal("done"), 2500);
     return () => window.clearTimeout(failsafe);
   }, [portal]);
-  const [assembling, setAssembling] = useState(false);
-
-  useEffect(() => {
-    if (portal !== "done") {
-      setAssembling(false);
-      return;
-    }
-    setAssembling(true);
-    const id = window.setTimeout(() => setAssembling(false), 1400);
-    return () => window.clearTimeout(id);
-  }, [portal]);
-
   const wallCopy = (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col justify-center">
       <p className="text-[0.62rem] tracking-[0.28em] text-electric-soft uppercase">
@@ -152,19 +140,16 @@ export function FaceApp({
         />
       ) : null}
 
-      {/* Full-bleed chamber — the page IS the inside of the cube */}
+      {/* Full-bleed under the enter overlay from the first frame — no late scale-in */}
       <div
         className={cn(
           "absolute inset-0",
-          portal !== "done"
-            ? "pointer-events-none opacity-0"
-            : "face-content-in",
+          portal !== "done" && "pointer-events-none",
         )}
       >
         <CubeInteriorRoom
           faceId={faceId}
           short={face.short}
-          arriving={assembling}
           text={wallCopy}
           visual={wallVisual}
           copyLabel={t.cube.sideCopy}

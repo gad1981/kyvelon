@@ -75,8 +75,12 @@ export function CubeWorld({
     ).matches;
 
     const measure = () => {
-      const edge = Math.min(window.innerWidth, window.innerHeight);
-      setSize(Math.round(Math.min(Math.max(edge * 0.52, 220), 460)));
+      // Fixed center band: ignore side HUD width so the cube area stays stable.
+      const sideReserve = window.innerWidth >= 768 ? 360 : 168;
+      const usableW = Math.max(window.innerWidth - sideReserve, 200);
+      const usableH = window.innerHeight * 0.72;
+      const edge = Math.min(usableW, usableH);
+      setSize(Math.round(Math.min(Math.max(edge * 0.78, 200), 420)));
     };
     measure();
     window.addEventListener("resize", measure);
@@ -247,29 +251,113 @@ export function CubeWorld({
   }, [dragging]);
 
   const face = t.faces[active];
+  const activeIndex = Math.max(0, FACE_ORDER.indexOf(active));
+  const [hudIn, setHudIn] = useState(false);
+  const [stageLive, setStageLive] = useState(true);
+  const [railOpen, setRailOpen] = useState(false);
+  const prevFaceIndex = useRef(activeIndex);
+  const [dossierDir, setDossierDir] = useState<"next" | "prev">("next");
+
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => setHudIn(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
+    const prev = prevFaceIndex.current;
+    setDossierDir(activeIndex >= prev ? "next" : "prev");
+    prevFaceIndex.current = activeIndex;
+  }, [activeIndex]);
+
+  useEffect(() => {
+    const syncNavOffset = () => {
+      const header = document.querySelector<HTMLElement>("[data-site-header]");
+      const h = header ? Math.ceil(header.getBoundingClientRect().height) : 76;
+      stageRef.current?.style.setProperty("--cube-nav-offset", `${h}px`);
+    };
+
+    const sync = () => {
+      const live = window.scrollY < window.innerHeight * 0.72;
+      setStageLive(live);
+      idle.current = live && !drag.current;
+      if (!live) setRailOpen(false);
+      syncNavOffset();
+    };
+    sync();
+
+    const header = document.querySelector<HTMLElement>("[data-site-header]");
+    const ro =
+      header && typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(syncNavOffset)
+        : null;
+    if (header && ro) ro.observe(header);
+
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!railOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setRailOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [railOpen]);
 
   return (
+    <>
+    {/* Keeps page flow while the cube stage stays fixed in the viewport */}
+    <div className="h-[100svh] w-full" aria-hidden="true" />
+    {/* Outside #cube so nav/menu aren't trapped in the stage stacking context */}
+    <SiteHeader
+      locale={locale}
+      t={t}
+      tone="light"
+      logoHref={`/${locale}#cube`}
+      priority
+      hud={stageLive}
+    />
     <div
       id="cube"
       ref={stageRef}
       data-nav-tone="light"
       className={cn(
-        "relative h-[100svh] w-full overflow-hidden bg-surface",
-        dragging ? "cursor-grabbing touch-none" : "cursor-grab touch-pan-y",
+        "fixed inset-0 z-10 h-[100svh] w-full overflow-hidden bg-surface",
+        stageLive
+          ? dragging
+            ? "cursor-grabbing touch-none"
+            : "cursor-grab touch-pan-y"
+          : "pointer-events-none",
       )}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
+      onPointerDown={stageLive ? onPointerDown : undefined}
+      onPointerMove={stageLive ? onPointerMove : undefined}
+      onPointerUp={stageLive ? onPointerUp : undefined}
+      onPointerCancel={stageLive ? onPointerUp : undefined}
       role="application"
       aria-label={t.cube.dragAria}
+      aria-hidden={stageLive ? undefined : true}
     >
-      <IsoGrid />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(0_56_248_/_0.12),transparent_55%),linear-gradient(160deg,rgb(247_248_251)_0%,rgb(230_235_245)_100%)]" />
 
       <div
         className={cn(
-          "absolute inset-0 flex items-center justify-center transition duration-700",
+          "absolute inset-0 transition-opacity duration-500",
+          stageLive ? "opacity-100" : "opacity-0",
+        )}
+      >
+      <IsoGrid />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(0_56_248_/_0.12),transparent_55%),linear-gradient(160deg,rgb(247_248_251)_0%,rgb(230_235_245)_100%)]" />
+
+      {/* Fixed center stage — cube stays locked in the middle band */}
+      <div
+        className={cn(
+          "absolute inset-x-[min(22vw,11rem)] top-[12%] bottom-[14%] flex items-center justify-center sm:inset-x-[min(26vw,14rem)] sm:top-[10%] sm:bottom-[12%]",
+          "transition duration-700",
           exiting && "cube-world-dive",
         )}
         style={{
@@ -347,80 +435,211 @@ export function CubeWorld({
         </div>
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-[18%] start-1/2 h-12 w-[42%] -translate-x-1/2 rounded-[100%] bg-navy/30 blur-2xl rtl:translate-x-1/2"
+          className="pointer-events-none absolute bottom-[18%] start-1/2 h-12 w-[42%] -translate-x-1/2 rounded-[100%] bg-navy/25 blur-2xl rtl:translate-x-1/2"
         />
       </div>
 
-      <SiteHeader
-        locale={locale}
-        t={t}
-        tone="light"
-        logoHref={`/${locale}#cube`}
-        priority
-        hud
-      />
-
-      <div data-hud className="absolute inset-x-0 bottom-0 z-20 p-4 sm:p-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-4">
-          {hint && (
-            <p className="text-center text-[0.68rem] tracking-[0.2em] text-navy/45 uppercase">
-              {t.cube.hint}
-            </p>
+      {/* Hint — floats low-center, never a bar across the cube */}
+      {hint && (
+        <p
+          data-hud
+          className={cn(
+            "pointer-events-none absolute inset-x-0 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-20 text-center text-[0.62rem] tracking-[0.2em] text-navy/40 uppercase transition duration-700 sm:bottom-8",
+            hudIn ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
           )}
+        >
+          {t.cube.hint}
+        </p>
+      )}
 
-          <div
-            className="flex flex-wrap items-end justify-between gap-4 border border-navy/10 bg-white/70 p-4 backdrop-blur-md sm:p-5"
-            style={{
-              clipPath:
-                "polygon(1.5% 0, 100% 0, 100% 86%, 98.5% 100%, 0 100%, 0 14%)",
-            }}
-            aria-live="polite"
-          >
-            <div className="min-w-0 flex-1">
-              <p className="text-[0.65rem] tracking-[0.22em] text-electric uppercase">
-                {t.cube.activeFace} · {face.short}
-              </p>
-              <h1 className="font-display mt-1 text-xl font-semibold tracking-[-0.02em] text-navy sm:text-3xl">
-                {face.title}
-              </h1>
-              <p className="mt-1 max-w-xl text-sm text-navy/65 sm:text-base">
-                {face.copy}
-              </p>
-            </div>
-            <button
-              type="button"
-              data-hud
-              onClick={() => enterFace(active)}
-              className="inline-flex h-11 shrink-0 items-center bg-electric px-5 text-[0.7rem] tracking-[0.16em] text-white uppercase transition hover:bg-navy"
-            >
-              {t.cube.enterFace}
-            </button>
+      {railOpen ? (
+        <button
+          type="button"
+          data-hud
+          className="cube-rail-scrim absolute inset-x-0 bottom-0 z-30 bg-navy/30 backdrop-blur-[2px]"
+          style={{ top: "var(--cube-nav-offset, 4.75rem)" }}
+          aria-label={t.cube.facesClose}
+          onClick={() => setRailOpen(false)}
+        />
+      ) : null}
+
+      {/* Drawer + ear stay one unit — ear always visible */}
+      <aside
+        id="cube-face-rail"
+        data-hud
+        className={cn(
+          "cube-hud-slider cube-hud-slider-left absolute start-0 top-1/2 z-40 flex items-stretch",
+          railOpen ? "is-drawer-open" : "is-drawer-closed",
+          hudIn && "is-in",
+        )}
+        aria-label={t.cube.facesNav}
+      >
+        <div className="cube-hud-slider-shell relative flex w-[min(10.75rem,58vw)] flex-col overflow-hidden rounded-none border border-navy/10 border-e-0 bg-white/85 backdrop-blur-md sm:w-[11.25rem]">
+          <div className="flex items-center border-b border-navy/10 px-3 py-2.5 sm:px-3.5">
+            <p className="text-[0.58rem] tracking-[0.2em] text-electric uppercase">
+              {t.cube.facesNav}
+            </p>
           </div>
-
-          <nav
-            className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            aria-label={t.cube.facesNav}
-          >
-            {FACE_ORDER.map((id) => (
+          <nav className="relative flex flex-col py-1.5">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-1.5 start-0 w-[3px] bg-navy/10"
+            />
+            <span
+              aria-hidden="true"
+              className="cube-face-rail-thumb absolute start-0 z-[1] w-[3px] bg-electric"
+              style={{
+                top: `calc(0.375rem + ${activeIndex} * ((100% - 0.75rem) / ${FACE_ORDER.length}))`,
+                height: `calc((100% - 0.75rem) / ${FACE_ORDER.length})`,
+              }}
+            />
+            {FACE_ORDER.map((id, index) => (
               <button
                 key={id}
                 type="button"
                 data-hud
-                onClick={() => snapTo(id)}
+                onClick={() => {
+                  snapTo(id);
+                  setRailOpen(false);
+                }}
                 onDoubleClick={() => enterFace(id)}
+                style={{
+                  transitionDelay: railOpen ? `${90 + index * 45}ms` : "0ms",
+                }}
                 className={cn(
-                  "h-9 shrink-0 px-3 text-[0.65rem] tracking-[0.14em] uppercase transition",
+                  "cube-hud-rail-item relative flex min-h-10 items-center gap-2.5 pe-3 ps-3.5 text-start sm:min-h-11 sm:pe-3.5 sm:ps-4",
                   active === id
-                    ? "bg-navy text-white"
-                    : "bg-white/55 text-navy/60 backdrop-blur-sm hover:bg-white hover:text-navy",
+                    ? "bg-electric/5 text-navy"
+                    : "text-navy/40 hover:bg-white/50 hover:text-navy/70",
                 )}
                 aria-current={active === id ? "true" : undefined}
+                aria-label={t.faces[id].title}
               >
-                {t.faces[id].short}
+                <span
+                  className={cn(
+                    "font-mono text-[0.58rem] tracking-[0.08em] tabular-nums transition duration-300",
+                    active === id ? "text-electric" : "text-navy/30",
+                  )}
+                >
+                  0{index + 1}
+                </span>
+                <span
+                  className={cn(
+                    "text-[0.68rem] tracking-[0.16em] uppercase transition duration-300 sm:text-[0.72rem]",
+                    active === id && "font-semibold tracking-[0.14em]",
+                  )}
+                >
+                  {t.faces[id].short}
+                </span>
+                {active === id ? (
+                  <span
+                    aria-hidden="true"
+                    className="ms-auto h-1.5 w-1.5 bg-electric"
+                  />
+                ) : null}
               </button>
             ))}
           </nav>
         </div>
+
+        <button
+          type="button"
+          data-hud
+          className="cube-rail-ear flex shrink-0 flex-col items-center justify-center gap-2 self-center border border-navy/10 border-s-0 bg-white/85 py-4 ps-2 pe-2.5 backdrop-blur-md sm:py-5 sm:pe-3"
+          aria-expanded={railOpen}
+          aria-controls="cube-face-rail"
+          aria-label={railOpen ? t.cube.facesClose : t.cube.facesOpen}
+          onClick={() => setRailOpen((open) => !open)}
+        >
+          {railOpen ? (
+            <span
+              aria-hidden="true"
+              className="text-[1.35rem] leading-none text-navy/55"
+            >
+              ×
+            </span>
+          ) : (
+            <>
+              <span className="font-mono text-[0.55rem] tracking-[0.14em] text-electric tabular-nums">
+                0{activeIndex + 1}
+              </span>
+              <span className="cube-rail-tab-label text-[0.58rem] font-semibold tracking-[0.22em] text-navy uppercase">
+                {face.short}
+              </span>
+              <span aria-hidden="true" className="text-electric/80">
+                ›
+              </span>
+            </>
+          )}
+        </button>
+      </aside>
+
+      {/* Right slider — active face dossier */}
+      <aside
+        data-hud
+        className={cn(
+          "cube-hud-slider cube-hud-slider-right absolute bottom-[max(4.25rem,env(safe-area-inset-bottom))] z-20",
+          "inset-x-3 w-auto",
+          "md:inset-x-auto md:start-auto md:end-5 md:bottom-8 md:w-[19rem] lg:end-7 lg:w-[20rem]",
+          hudIn && "is-in",
+        )}
+        aria-live="polite"
+      >
+        <div className="cube-hud-slider-shell overflow-hidden rounded-none border border-navy/10 bg-white/70 backdrop-blur-md">
+          <div
+            key={active}
+            className={cn(
+              "cube-face-dossier rounded-none p-4 sm:p-5",
+              dossierDir === "next"
+                ? "cube-dossier-slide-next"
+                : "cube-dossier-slide-prev",
+            )}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[0.58rem] tracking-[0.22em] text-electric uppercase sm:text-[0.62rem]">
+                {t.cube.activeFace}
+              </p>
+              <p className="font-mono text-[0.58rem] tracking-[0.12em] text-navy/40 tabular-nums">
+                0{activeIndex + 1}
+                <span className="text-navy/20"> / </span>
+                0{FACE_ORDER.length}
+              </p>
+            </div>
+            <div
+              aria-hidden="true"
+              className="cube-dossier-meter mt-3 h-px overflow-hidden bg-navy/10"
+            >
+              <span
+                className="cube-dossier-meter-fill block h-full bg-electric"
+                style={{
+                  width: `${((activeIndex + 1) / FACE_ORDER.length) * 100}%`,
+                }}
+              />
+            </div>
+            <h1 className="font-display mt-3 text-xl font-semibold tracking-[-0.02em] text-navy sm:text-2xl">
+              {face.title}
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-navy/65">
+              {face.copy}
+            </p>
+            <button
+              type="button"
+              data-hud
+              onClick={() => enterFace(active)}
+              className="group mt-4 inline-flex h-11 w-full items-center justify-between gap-3 bg-electric px-4 text-[0.68rem] tracking-[0.16em] text-white uppercase transition hover:bg-navy"
+            >
+              <span>{t.cube.enterFace}</span>
+              <span
+                aria-hidden="true"
+                className="transition duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
+              >
+                →
+              </span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
       </div>
 
       <CubeExitPortal
@@ -430,6 +649,7 @@ export function CubeWorld({
         enteringLabel={t.cube.entering}
       />
     </div>
+    </>
   );
 }
 

@@ -3,10 +3,12 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
+  type TransitionEvent as ReactTransitionEvent,
 } from "react";
 import type { CubeFaceId } from "@/lib/cube-faces";
 import { cn } from "@/lib/utils";
@@ -37,7 +39,7 @@ type CubeInteriorRoomProps = {
 
 /**
  * Inside a face: two full cube sides — copy (front) and graph (right).
- * Flip yaw like turning the cube; arrows + swipe.
+ * Copy rests as a true full-bleed flat wall; 3D engages only while flipping.
  */
 export function CubeInteriorRoom({
   faceId,
@@ -53,13 +55,20 @@ export function CubeInteriorRoom({
 }: CubeInteriorRoomProps) {
   const color = FACE_COLOR[faceId];
   const [panel, setPanel] = useState<Panel>("copy");
-  const [depth, setDepth] = useState(480);
+  const [yaw, setYaw] = useState(0);
+  const [solid, setSolid] = useState(false);
+  const [flipping, setFlipping] = useState(false);
+  const [depth, setDepth] = useState(() =>
+    typeof window !== "undefined" ? Math.round(window.innerWidth) : 1024,
+  );
   const sceneRef = useRef<HTMLDivElement>(null);
   const cubeRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number; decided?: "x" | "y" } | null>(
     null,
   );
   const reduced = useRef(false);
+  const panelRef = useRef(panel);
+  panelRef.current = panel;
 
   useEffect(() => {
     reduced.current = window.matchMedia(
@@ -69,9 +78,12 @@ export function CubeInteriorRoom({
 
   useEffect(() => {
     setPanel("copy");
+    setYaw(0);
+    setSolid(false);
+    setFlipping(false);
   }, [faceId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = cubeRef.current;
     if (!el) return;
     const measure = () => {
@@ -85,8 +97,46 @@ export function CubeInteriorRoom({
   }, []);
 
   const go = useCallback((next: Panel) => {
+    if (next === panelRef.current) return;
+    const targetYaw = next === "copy" ? 0 : -90;
+
+    if (reduced.current) {
+      setPanel(next);
+      setYaw(targetYaw);
+      setSolid(next === "graph");
+      setFlipping(false);
+      return;
+    }
+
+    setFlipping(true);
     setPanel(next);
+
+    if (next === "graph") {
+      // Seat the wall in 3D at yaw 0 (still full-bleed), then turn.
+      setSolid(true);
+      setYaw(0);
+      setFlipping(false);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setFlipping(true);
+          setYaw(-90);
+        });
+      });
+      return;
+    }
+
+    // Already solid on graph — rotate back, flatten after transition.
+    setSolid(true);
+    setFlipping(true);
+    setYaw(0);
   }, []);
+
+  const onFlipEnd = (e: ReactTransitionEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    if (e.propertyName !== "transform") return;
+    setFlipping(false);
+    if (panelRef.current === "copy") setSolid(false);
+  };
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest("[data-carousel-ctrl]")) return;
@@ -112,7 +162,6 @@ export function CubeInteriorRoom({
   };
 
   const half = depth / 2;
-  const yaw = panel === "copy" ? 0 : -90;
 
   return (
     <div
@@ -136,10 +185,14 @@ export function CubeInteriorRoom({
       <div
         ref={sceneRef}
         className="chamber-scene absolute inset-0 z-[1] touch-pan-y"
-        style={{
-          perspective: `${Math.round(depth * 2.1)}px`,
-          perspectiveOrigin: "50% 48%",
-        }}
+        style={
+          solid
+            ? {
+                perspective: `${Math.round(depth * 2.1)}px`,
+                perspectiveOrigin: "50% 50%",
+              }
+            : undefined
+        }
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -147,27 +200,30 @@ export function CubeInteriorRoom({
       >
         <div
           ref={cubeRef}
-          className="chamber-carousel absolute inset-[3%_3%_11%] sm:inset-[4%_6%_13%]"
+          className="chamber-carousel absolute inset-0"
           style={{
-            transformStyle: "preserve-3d",
-            transform: `translateZ(${-half}px) rotateY(${yaw}deg)`,
-            transition: reduced.current
-              ? "none"
-              : "transform 780ms cubic-bezier(0.22, 1, 0.36, 1)",
+            transformStyle: solid ? "preserve-3d" : undefined,
+            transform: solid
+              ? `translateZ(${-half}px) rotateY(${yaw}deg)`
+              : "none",
+            transition:
+              flipping && !reduced.current
+                ? "transform 780ms cubic-bezier(0.22, 1, 0.36, 1)"
+                : "none",
           }}
+          onTransitionEnd={onFlipEnd}
         >
           {/* FRONT — copy */}
           <section
-            className="chamber-side chamber-side-copy absolute inset-0 overflow-hidden border border-white/15"
+            className="chamber-side chamber-side-copy absolute inset-0 overflow-hidden"
             style={{
-              transform: `rotateY(0deg) translateZ(${half}px)`,
+              transform: solid
+                ? `rotateY(0deg) translateZ(${half}px)`
+                : "none",
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               background: `linear-gradient(165deg, ${color} 0%, #071228 48%, #020612 100%)`,
-              boxShadow: `
-                inset 0 0 80px rgb(0 56 248 / 0.22),
-                0 0 60px rgb(0 0 0 / 0.35)
-              `,
+              boxShadow: "inset 0 0 80px rgb(0 56 248 / 0.22)",
             }}
             aria-hidden={panel !== "copy"}
           >
@@ -183,16 +239,16 @@ export function CubeInteriorRoom({
 
           {/* RIGHT — graph */}
           <section
-            className="chamber-side chamber-side-graph absolute inset-0 overflow-hidden border border-electric/45"
+            className="chamber-side chamber-side-graph absolute inset-0 overflow-hidden"
             style={{
-              transform: `rotateY(90deg) translateZ(${half}px)`,
+              transform: solid
+                ? `rotateY(90deg) translateZ(${half}px)`
+                : "rotateY(90deg) translateZ(100%)",
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               background: `linear-gradient(210deg, ${color} 0%, #030918 50%, #01040c 100%)`,
-              boxShadow: `
-                inset 0 0 100px rgb(0 56 248 / 0.35),
-                0 0 60px rgb(0 0 0 / 0.35)
-              `,
+              boxShadow: "inset 0 0 100px rgb(0 56 248 / 0.35)",
+              visibility: solid ? "visible" : "hidden",
             }}
             aria-hidden={panel !== "graph"}
           >
@@ -209,16 +265,17 @@ export function CubeInteriorRoom({
             </p>
           </section>
 
-          {/* Thin edge so the flip reads as a solid cube */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-0 w-px"
-            style={{
-              transform: `rotateY(-90deg) translateZ(${half}px)`,
-              background:
-                "linear-gradient(180deg, transparent, rgb(122 160 255 / 0.55), transparent)",
-            }}
-          />
+          {solid ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-0 w-px"
+              style={{
+                transform: `rotateY(-90deg) translateZ(${half}px)`,
+                background:
+                  "linear-gradient(180deg, transparent, rgb(122 160 255 / 0.55), transparent)",
+              }}
+            />
+          ) : null}
         </div>
       </div>
 

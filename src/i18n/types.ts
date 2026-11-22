@@ -26,6 +26,8 @@ export type Dictionary = {
     activeFace: string;
     enterFace: string;
     facesNav: string;
+    facesOpen: string;
+    facesClose: string;
     backToCube: string;
     backHome: string;
     faceLabel: string;

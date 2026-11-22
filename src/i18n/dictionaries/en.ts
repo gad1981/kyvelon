@@ -15,6 +15,8 @@ const en: Dictionary = {
     activeFace: "Active face",
     enterFace: "Enter face",
     facesNav: "Cube faces",
+    facesOpen: "Open faces",
+    facesClose: "Close faces",
     backToCube: "Back to cube",
     backHome: "Home",
     faceLabel: "Face",

@@ -15,6 +15,8 @@ const el: Dictionary = {
     activeFace: "Ενεργή έδρα",
     enterFace: "Είσοδος στην έδρα",
     facesNav: "Έδρες κύβου",
+    facesOpen: "Άνοιγμα εδρών",
+    facesClose: "Κλείσιμο εδρών",
     backToCube: "Πίσω στον κύβο",
     backHome: "Αρχική",
     faceLabel: "Έδρα",

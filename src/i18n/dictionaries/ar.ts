@@ -15,6 +15,8 @@ const ar: Dictionary = {
     activeFace: "الوجه النشط",
     enterFace: "ادخل الوجه",
     facesNav: "أوجه المكعّب",
+    facesOpen: "فتح الأوجه",
+    facesClose: "إغلاق الأوجه",
     backToCube: "العودة إلى المكعّب",
     backHome: "الرئيسية",
     faceLabel: "وجه",

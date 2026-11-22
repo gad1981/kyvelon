@@ -35,7 +35,9 @@ export default async function HomePage({
   return (
     <main>
       <CubeWorld locale={locale} t={t} />
-      <StorySections locale={locale} t={t} />
+      <div className="relative z-20">
+        <StorySections locale={locale} t={t} />
+      </div>
     </main>
   );
 }

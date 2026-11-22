@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useState,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/types";
@@ -57,6 +63,15 @@ export function SiteMenu({
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
+  }, [open]);
+
+  // Keep header (and burger) above the portaled sheet while open.
+  useEffect(() => {
+    const header = document.querySelector<HTMLElement>("[data-site-header]");
+    if (!header) return;
+    if (open) header.setAttribute("data-menu-open", "");
+    else header.removeAttribute("data-menu-open");
+    return () => header.removeAttribute("data-menu-open");
   }, [open]);
 
   const linkCls =
@@ -157,120 +172,126 @@ export function SiteMenu({
           />
         </button>
 
-        {open ? (
-          <div
-            className="fixed inset-0 z-[95] md:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-label={m.title}
-          >
-            <button
-              type="button"
-              className="absolute inset-0 bg-black/55 backdrop-blur-sm"
-              aria-label={m.close}
-              onClick={() => setOpen(false)}
-            />
-            <div
-              id={panelId}
-              className={cn(
-                "absolute inset-y-0 end-0 flex w-[min(100%,22rem)] flex-col border-s shadow-2xl",
-                tone === "dark"
-                  ? "border-white/10 bg-[#040a18] text-white"
-                  : "border-navy/10 bg-surface text-navy",
-              )}
-            >
-              <div className="flex items-center justify-between border-b border-current/10 px-5 py-4">
-                <p className="text-[0.62rem] tracking-[0.22em] text-electric uppercase">
-                  {m.title}
-                </p>
+        {open && typeof document !== "undefined"
+          ? createPortal(
+              <div
+                className="fixed inset-0 z-[100] md:hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-label={m.title}
+              >
                 <button
                   type="button"
+                  className="absolute inset-0 bg-black/55 backdrop-blur-sm"
+                  aria-label={m.close}
                   onClick={() => setOpen(false)}
-                  className="text-[0.62rem] tracking-[0.16em] uppercase opacity-50 transition hover:opacity-100"
+                />
+                <div
+                  id={panelId}
+                  className={cn(
+                    "absolute inset-y-0 end-0 flex w-[min(100%,22rem)] flex-col border-s shadow-2xl",
+                    tone === "dark"
+                      ? "border-white/10 bg-[#040a18] text-white"
+                      : "border-navy/10 bg-surface text-navy",
+                  )}
                 >
-                  {m.close}
-                </button>
-              </div>
+                  <div className="flex items-center justify-between border-b border-current/10 px-5 py-4">
+                    <p className="text-[0.62rem] tracking-[0.22em] text-electric uppercase">
+                      {m.title}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setOpen(false)}
+                      className="text-[0.62rem] tracking-[0.16em] uppercase opacity-50 transition hover:opacity-100"
+                    >
+                      {m.close}
+                    </button>
+                  </div>
 
-              <nav className="flex-1 overflow-y-auto px-5 py-6" aria-label={m.title}>
-                <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
-                  {f.explore}
-                </p>
-                <ul className="mt-3 space-y-3">
-                  <li>
-                    <Link
-                      href={`${home}#cube`}
-                      className={cn("font-display text-xl", linkCls)}
-                    >
-                      {f.theCube}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={`/${locale}/work`}
-                      className={cn("font-display text-xl", linkCls)}
-                    >
-                      {f.work}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={`/${locale}/insights`}
-                      className={cn("font-display text-xl", linkCls)}
-                    >
-                      {f.insights}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={`/${locale}/people`}
-                      className={cn("font-display text-xl", linkCls)}
-                    >
-                      {f.people}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={`/${locale}/contact`}
-                      className={cn("font-display text-xl", linkCls)}
-                    >
-                      {f.startBrief}
-                    </Link>
-                  </li>
-                </ul>
+                  <nav
+                    className="flex-1 overflow-y-auto px-5 py-6"
+                    aria-label={m.title}
+                  >
+                    <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
+                      {f.explore}
+                    </p>
+                    <ul className="mt-3 space-y-3">
+                      <li>
+                        <Link
+                          href={`${home}#cube`}
+                          className={cn("font-display text-xl", linkCls)}
+                        >
+                          {f.theCube}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href={`/${locale}/work`}
+                          className={cn("font-display text-xl", linkCls)}
+                        >
+                          {f.work}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href={`/${locale}/insights`}
+                          className={cn("font-display text-xl", linkCls)}
+                        >
+                          {f.insights}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href={`/${locale}/people`}
+                          className={cn("font-display text-xl", linkCls)}
+                        >
+                          {f.people}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href={`/${locale}/contact`}
+                          className={cn("font-display text-xl", linkCls)}
+                        >
+                          {f.startBrief}
+                        </Link>
+                      </li>
+                    </ul>
 
-                <p className="mt-10 text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
-                  {f.faces}
-                </p>
-                <ul className="mt-3 space-y-2.5">
-                  {SERVICE_FACE_IDS.map((id) => (
-                    <li key={id}>
-                      <Link
-                        href={`/${locale}/faces/${id}`}
-                        className={cn("text-sm", linkCls)}
-                      >
-                        {t.faces[id].title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                    <p className="mt-10 text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
+                      {f.faces}
+                    </p>
+                    <ul className="mt-3 space-y-2.5">
+                      {SERVICE_FACE_IDS.map((id) => (
+                        <li key={id}>
+                          <Link
+                            href={`/${locale}/faces/${id}`}
+                            className={cn("text-sm", linkCls)}
+                          >
+                            {t.faces[id].title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
 
-                <div className="mt-10 border-t border-current/10 pt-6">
-                  <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
-                    {t.lang.label}
-                  </p>
-                  <LanguageSwitcher
-                    locale={locale}
-                    label={t.lang.label}
-                    tone={tone === "dark" ? "dark" : "light"}
-                    compact
-                    className="mt-3"
-                  />
+                    <div className="mt-10 border-t border-current/10 pt-6">
+                      <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
+                        {t.lang.label}
+                      </p>
+                      <LanguageSwitcher
+                        locale={locale}
+                        label={t.lang.label}
+                        tone={tone === "dark" ? "dark" : "light"}
+                        compact
+                        className="mt-3"
+                      />
+                    </div>
+                  </nav>
                 </div>
-              </nav>
-            </div>
-          </div>
-        ) : null}
+              </div>,
+              document.body,
+            )
+          : null}
       </div>
     </>
   );

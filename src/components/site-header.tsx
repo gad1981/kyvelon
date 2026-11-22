@@ -113,7 +113,7 @@ export function SiteHeader({
       data-site-header
       data-hud={hud ? true : undefined}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 px-5 pt-6 pb-4 transition-[background-color,border-color,backdrop-filter] duration-300 sm:px-8",
+        "fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 px-5 pt-6 pb-4 transition-[background-color,border-color,backdrop-filter] duration-300 sm:px-8 data-[menu-open]:z-[110]",
         scrolled &&
           (tone === "dark"
             ? "border-b border-white/10 bg-navy/80 backdrop-blur-md"
