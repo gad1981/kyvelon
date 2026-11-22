@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { ContactForm } from "@/components/contact-form";
 import { FaceSoundToggle } from "@/components/face-atmosphere";
 import { CubeEnterSequence } from "@/components/cube-portal";
@@ -9,7 +9,7 @@ import { CubeInteriorRoom } from "@/components/cube-interior";
 import { FaceGraph } from "@/components/face-graph";
 import { SiteHeader } from "@/components/site-header";
 import type { Locale } from "@/i18n/config";
-import type { Dictionary } from "@/i18n/types";
+import type { Dictionary, FaceSlidePoint } from "@/i18n/types";
 import { FACE_ORDER, type CubeFaceId } from "@/lib/cube-faces";
 import { consumeCubeEntry } from "@/lib/cube-entry";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,53 @@ function DetailLine({ line }: { line: string }) {
   return line;
 }
 
+function SlideShell({
+  eyebrow,
+  title,
+  body,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  body?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col justify-center">
+      <p className="text-[0.62rem] tracking-[0.28em] text-electric-soft uppercase">
+        {eyebrow}
+      </p>
+      <h2 className="font-display mt-4 text-[clamp(1.85rem,5vw,3.25rem)] leading-[1.02] font-semibold tracking-[-0.03em]">
+        {title}
+      </h2>
+      {body ? (
+        <p className="mt-4 max-w-[42ch] text-[clamp(0.95rem,1.8vw,1.15rem)] leading-relaxed text-white/85">
+          {body}
+        </p>
+      ) : null}
+      {children}
+    </div>
+  );
+}
+
+function CraftPoints({ points }: { points: FaceSlidePoint[] }) {
+  return (
+    <ul className="mt-8 grid gap-4 border-s-2 border-electric ps-5">
+      {points.map((point) => (
+        <li
+          key={point.label}
+          className="grid gap-1 text-[clamp(0.85rem,1.4vw,1.05rem)] leading-snug text-white/88"
+        >
+          <span className="text-[0.58rem] tracking-[0.2em] text-[#7aa0ff] uppercase">
+            {point.label}
+          </span>
+          <DetailLine line={point.body} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function FaceApp({
   locale,
   t,
@@ -45,8 +92,8 @@ export function FaceApp({
   faceId: CubeFaceId;
 }) {
   const face = t.faces[faceId];
+  const slides = face.slides;
   const home = `/${locale}`;
-  // pending until mount — avoids SSR/client portal mismatch (hydration)
   const [portal, setPortal] = useState<"pending" | "full" | "short" | "done">(
     "pending",
   );
@@ -60,66 +107,86 @@ export function FaceApp({
     setPortal("done");
   }, []);
 
-  // Safety: never leave the Sophon overlay stuck if timers are interrupted
   useEffect(() => {
     if (portal !== "full" && portal !== "short") return;
     const failsafe = window.setTimeout(() => setPortal("done"), 2500);
     return () => window.clearTimeout(failsafe);
   }, [portal]);
-  const wallCopy = (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col justify-center">
-      <p className="text-[0.62rem] tracking-[0.28em] text-electric-soft uppercase">
-        {t.cube.faceLabel} · {face.short}
-      </p>
-      <h1 className="font-display mt-4 text-[clamp(2rem,5.5vw,3.75rem)] leading-[1.02] font-semibold tracking-[-0.03em]">
-        {face.title}
-      </h1>
-      <p className="mt-4 max-w-[42ch] text-[clamp(0.95rem,1.8vw,1.2rem)] leading-relaxed text-white/85">
-        {face.copy}
-      </p>
 
-      <ul className="mt-8 grid gap-4 border-s-2 border-electric ps-5">
-        {face.detail.map((line, i) => (
-          <li
-            key={line}
-            className="grid gap-1 text-[clamp(0.85rem,1.4vw,1.05rem)] leading-snug text-white/88"
-          >
-            {face.graph[i] ? (
-              <span className="text-[0.58rem] tracking-[0.2em] text-[#7aa0ff] uppercase">
-                {face.graph[i]}
-              </span>
-            ) : null}
-            <DetailLine line={line} />
-          </li>
-        ))}
-      </ul>
-
-      {faceId === "contact" ? (
-        <div className="mt-6 max-w-full shrink-0 border border-white/15 bg-black/25 p-4 backdrop-blur-sm [&_form]:space-y-2.5 [&_textarea]:min-h-[56px]">
-          <ContactForm t={t.contactForm} />
-        </div>
-      ) : (
-        <Link
-          href={`/${locale}/faces/contact`}
-          className="mt-8 inline-flex h-12 w-fit shrink-0 items-center bg-electric px-6 text-[0.68rem] tracking-[0.18em] text-white uppercase transition hover:bg-white hover:text-navy"
+  const walls = [
+    {
+      label: t.cube.sideBrief,
+      content: (
+        <SlideShell
+          eyebrow={slides.brief.eyebrow}
+          title={slides.brief.title}
+          body={slides.brief.body}
+        />
+      ),
+    },
+    {
+      label: t.cube.sideCraft,
+      content: (
+        <SlideShell
+          eyebrow={slides.craft.eyebrow}
+          title={slides.craft.title}
         >
-          {t.cube.briefFace}
-        </Link>
-      )}
-    </div>
-  );
-
-  const wallVisual = (
-    <FaceGraph
-      key={faceId}
-      faceId={faceId}
-      title={face.title}
-      labels={face.graph}
-      hubLabel={face.graphHub}
-      onWall
-      className="h-full w-full max-w-none"
-    />
-  );
+          <CraftPoints points={slides.craft.points} />
+        </SlideShell>
+      ),
+    },
+    {
+      label: t.cube.sideSystem,
+      mode: "visual" as const,
+      content: (
+        <div className="mx-auto flex w-full max-w-3xl flex-col justify-center gap-3 pt-[max(4.5rem,env(safe-area-inset-top))] pb-4 sm:gap-4">
+          <div className="shrink-0 px-1">
+            <p className="text-[0.58rem] tracking-[0.24em] text-electric-soft uppercase">
+              {slides.system.eyebrow}
+            </p>
+            <h2 className="font-display mt-2 text-[clamp(1.35rem,3.5vw,2.25rem)] font-semibold tracking-[-0.03em]">
+              {slides.system.title}
+            </h2>
+            <p className="mt-2 max-w-[46ch] text-sm text-white/70 sm:text-base">
+              {slides.system.body}
+            </p>
+          </div>
+          <FaceGraph
+            key={`${faceId}-system`}
+            faceId={faceId}
+            title={slides.system.title}
+            labels={face.graph}
+            hubLabel={face.graphHub}
+            onWall
+            className="h-[min(42vh,20rem)] w-full max-w-none shrink-0"
+          />
+        </div>
+      ),
+    },
+    {
+      label: t.cube.sideMove,
+      content: (
+        <SlideShell
+          eyebrow={slides.move.eyebrow}
+          title={slides.move.title}
+          body={slides.move.body}
+        >
+          {faceId === "contact" ? (
+            <div className="mt-6 max-w-full shrink-0 border border-white/15 bg-black/25 p-4 backdrop-blur-sm [&_form]:space-y-2.5 [&_textarea]:min-h-[56px]">
+              <ContactForm t={t.contactForm} />
+            </div>
+          ) : (
+            <Link
+              href={`/${locale}/faces/contact`}
+              className="mt-8 inline-flex h-12 w-fit shrink-0 items-center bg-electric px-6 text-[0.68rem] tracking-[0.18em] text-white uppercase transition hover:bg-white hover:text-navy"
+            >
+              {slides.move.cta}
+            </Link>
+          )}
+        </SlideShell>
+      ),
+    },
+  ];
 
   return (
     <div
@@ -140,7 +207,6 @@ export function FaceApp({
         />
       ) : null}
 
-      {/* Full-bleed under the enter overlay from the first frame — no late scale-in */}
       <div
         className={cn(
           "absolute inset-0",
@@ -150,12 +216,9 @@ export function FaceApp({
         <CubeInteriorRoom
           faceId={faceId}
           short={face.short}
-          text={wallCopy}
-          visual={wallVisual}
-          copyLabel={t.cube.sideCopy}
-          graphLabel={t.cube.sideGraph}
-          nextLabel={t.cube.toGraph}
-          prevLabel={t.cube.toCopy}
+          walls={walls}
+          nextLabel={t.cube.toNext}
+          prevLabel={t.cube.toPrev}
         />
       </div>
 
@@ -165,31 +228,7 @@ export function FaceApp({
         tone="dark"
         logoHref={home}
         hud
-        startExtra={(navTone) => (
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href={`${home}#cube`}
-              className={
-                navTone === "dark"
-                  ? "inline-flex h-9 items-center border border-white/25 bg-black/35 px-3 text-[0.62rem] tracking-[0.16em] uppercase backdrop-blur-md transition hover:border-electric hover:text-electric-soft"
-                  : "inline-flex h-9 items-center border border-navy/20 bg-white/70 px-3 text-[0.62rem] tracking-[0.16em] text-navy uppercase backdrop-blur-md transition hover:border-electric"
-              }
-            >
-              ← {t.cube.backToCube}
-            </Link>
-            <Link
-              href={home}
-              className={
-                navTone === "dark"
-                  ? "hidden h-9 items-center px-2 text-[0.62rem] tracking-[0.16em] text-white/45 uppercase transition hover:text-white sm:inline-flex"
-                  : "hidden h-9 items-center px-2 text-[0.62rem] tracking-[0.16em] text-navy/45 uppercase transition hover:text-navy sm:inline-flex"
-              }
-            >
-              {t.cube.backHome}
-            </Link>
-          </div>
-        )}
-        endExtra={
+        menuExtra={
           <FaceSoundToggle
             key={faceId}
             faceId={faceId}

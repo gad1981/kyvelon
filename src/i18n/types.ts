@@ -1,15 +1,29 @@
 import type { CubeFaceId } from "@/lib/cube-faces";
 
+export type FaceSlidePoint = {
+  label: string;
+  body: string;
+};
+
+/** Four walls inside each face: Brief → Craft → System → Move */
+export type FaceSlides = {
+  brief: { eyebrow: string; title: string; body: string };
+  craft: { eyebrow: string; title: string; points: FaceSlidePoint[] };
+  system: { eyebrow: string; title: string; body: string };
+  move: { eyebrow: string; title: string; body: string; cta: string };
+};
+
 export type FaceCopy = {
   label: string;
   short: string;
   title: string;
   copy: string;
   detail: string[];
-  /** Short labels for the animated face graph (maps 1:1 to detail beats). */
+  /** Short labels for the animated face graph (system wall). */
   graph: string[];
   /** Optional hub / center label on the face graph (e.g. automation). */
   graphHub?: string;
+  slides: FaceSlides;
 };
 
 export type Dictionary = {
@@ -38,10 +52,12 @@ export type Dictionary = {
     soundHint: string;
     entering: string;
     inside: string;
-    sideCopy: string;
-    sideGraph: string;
-    toGraph: string;
-    toCopy: string;
+    sideBrief: string;
+    sideCraft: string;
+    sideSystem: string;
+    sideMove: string;
+    toNext: string;
+    toPrev: string;
   };
   faces: Record<CubeFaceId, FaceCopy>;
   contactForm: {

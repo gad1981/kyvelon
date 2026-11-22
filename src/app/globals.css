@@ -795,13 +795,7 @@
 
 .cube-hud-slider-left .cube-hud-slider-shell {
   border-radius: 0;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 1rem) 0,
-    100% 1rem,
-    100% 100%,
-    0 100%
-  );
+  clip-path: none;
 }
 
 .cube-hud-slider-right .cube-hud-slider-shell {

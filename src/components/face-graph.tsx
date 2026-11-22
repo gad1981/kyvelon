@@ -79,7 +79,7 @@ function Frame({
 function NodeBox({
   x,
   y,
-  w = 84,
+  w,
   h = 44,
   label,
   delay = "0s",
@@ -93,12 +93,17 @@ function NodeBox({
   delay?: string;
   accent?: boolean;
 }) {
+  const long = label.length > 8;
+  const boxW = w ?? (long ? Math.min(128, 52 + label.length * 6.2) : 84);
+  const fontSize = long ? 9.5 : 12;
+  const tracking = long ? "0.06em" : "0.12em";
+
   return (
     <g className="fg-rise" style={{ animationDelay: delay }}>
       <rect
-        x={x - w / 2}
+        x={x - boxW / 2}
         y={y - h / 2}
-        width={w}
+        width={boxW}
         height={h}
         fill={accent ? "rgb(0 56 248 / 0.55)" : "rgb(6 16 43 / 0.75)"}
         stroke={accent ? "#7aa0ff" : "rgb(255 255 255 / 0.35)"}
@@ -108,12 +113,12 @@ function NodeBox({
       />
       <text
         x={x}
-        y={y + 5}
+        y={y + 4}
         textAnchor="middle"
         fill="white"
-        fontSize="12"
+        fontSize={fontSize}
         fontFamily="var(--font-display), ui-sans-serif, system-ui"
-        letterSpacing="0.12em"
+        letterSpacing={tracking}
       >
         {label.toUpperCase()}
       </text>
@@ -257,11 +262,11 @@ function FlowPath({
   );
 }
 
-/** Architecture → UX → Scale pipeline into a living platform core */
+/** Architecture → UX → Scale → Launch pipeline into a living platform core */
 function SoftwareGraph({ labels }: { labels: string[] }) {
   return (
     <>
-      <FlowPath id="sw-a" d="M110 280 C110 230, 110 200, 110 170" delay="0s" />
+      <FlowPath id="sw-a" d="M78 280 C78 230, 78 200, 110 170" delay="0s" />
       <FlowPath
         id="sw-b"
         d="M200 280 C200 230, 200 200, 200 170"
@@ -269,7 +274,7 @@ function SoftwareGraph({ labels }: { labels: string[] }) {
       />
       <FlowPath
         id="sw-c"
-        d="M290 280 C290 230, 290 200, 290 170"
+        d="M322 280 C322 230, 322 200, 290 170"
         delay="0.2s"
       />
       <FlowPath
@@ -296,15 +301,22 @@ function SoftwareGraph({ labels }: { labels: string[] }) {
       <Packet pathId="sw-c" color="white" dur="2.6s" begin="1.1s" />
       <Packet pathId="sw-hub-c" color="#2a58ff" dur="1.8s" begin="0.5s" />
 
-      <NodeBox x={110} y={300} label={labels[0] ?? ""} delay="0s" />
-      <NodeBox x={200} y={300} label={labels[1] ?? ""} delay="0.12s" />
-      <NodeBox x={290} y={300} label={labels[2] ?? ""} delay="0.24s" />
+      <NodeBox x={78} y={300} label={labels[0] ?? ""} delay="0s" w={120} />
+      <NodeBox x={200} y={300} label={labels[1] ?? ""} delay="0.12s" w={72} />
+      <NodeBox x={322} y={300} label={labels[2] ?? ""} delay="0.24s" w={84} />
 
       <NodeBox x={110} y={148} label="CORE" delay="0.3s" w={72} h={40} />
       <NodeBox x={200} y={148} label="API" delay="0.36s" w={72} h={40} />
       <NodeBox x={290} y={148} label="DATA" delay="0.42s" w={72} h={40} />
 
-      <HubBox x={200} y={70} w={160} h={48} lines={["Platform"]} delay="0.5s" />
+      <HubBox
+        x={200}
+        y={70}
+        w={160}
+        h={48}
+        lines={[labels[3] ?? "Launch"]}
+        delay="0.5s"
+      />
     </>
   );
 }
@@ -358,14 +370,14 @@ function WebsitesGraph({ labels }: { labels: string[] }) {
 
       <NodeBox x={90} y={100} label={labels[0] ?? ""} delay="0s" w={90} />
       <NodeBox x={200} y={100} label={labels[1] ?? ""} delay="0.12s" w={90} />
-      <NodeBox x={310} y={100} label={labels[2] ?? ""} delay="0.24s" w={90} />
+      <NodeBox x={310} y={100} label={labels[3] ?? ""} delay="0.24s" w={90} />
 
       <HubBox
         x={200}
         y={255}
         w={150}
         h={48}
-        lines={["Convert"]}
+        lines={[labels[2] ?? "Convert"]}
         delay="0.4s"
       />
       <circle
@@ -577,7 +589,10 @@ function MethodGraph({ labels }: { labels: string[] }) {
         y={360}
         w={160}
         h={40}
-        lines={[labels[2] ?? "Assemble"]}
+        lines={[
+          labels[2] ?? "Assemble",
+          labels[3] ? `· ${labels[3]}` : "",
+        ].filter(Boolean)}
         delay="0.4s"
       />
     </>
@@ -634,6 +649,7 @@ function ContactGraph({ labels }: { labels: string[] }) {
       <NodeBox x={200} y={70} label={labels[0] ?? ""} delay="0s" />
       <NodeBox x={330} y={250} label={labels[1] ?? ""} delay="0.12s" />
       <NodeBox x={70} y={250} label={labels[2] ?? ""} delay="0.24s" />
+      <NodeBox x={200} y={340} label={labels[3] ?? ""} delay="0.36s" />
 
       <g className="fg-pulse" style={{ transformOrigin: "200px 200px" }}>
         <path

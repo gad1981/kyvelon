@@ -28,10 +28,12 @@ const en: Dictionary = {
     soundHint: "Tap to enter with ambient sound",
     entering: "Entering the cube",
     inside: "Inside the face",
-    sideCopy: "Copy",
-    sideGraph: "Graph",
-    toGraph: "Swipe to graph →",
-    toCopy: "← Back to copy",
+    sideBrief: "Brief",
+    sideCraft: "Craft",
+    sideSystem: "System",
+    sideMove: "Move",
+    toNext: "Next wall →",
+    toPrev: "← Prev wall",
   },
   faces: {
     software: {
@@ -44,7 +46,47 @@ const en: Dictionary = {
         "From concept through launch — products built to hold under pressure.",
         "Modular platforms that grow with the brief — speed without chaos.",
       ],
-      graph: ["Architecture", "UX", "Scale"],
+      graph: ["Architecture", "UX", "Scale", "Launch"],
+      slides: {
+        brief: {
+          eyebrow: "Face · Soft",
+          title: "Software creation",
+          body: "Custom products and platforms engineered as durable building blocks — not fragile feature piles.",
+        },
+        craft: {
+          eyebrow: "How we cut it",
+          title: "Four edges of a product that holds.",
+          points: [
+            {
+              label: "Architecture",
+              body: "Clear domains, contracts, and data paths before a single screen ships.",
+            },
+            {
+              label: "Product UX",
+              body: "Interfaces that teach themselves — sharp, calm, and built for real operators.",
+            },
+            {
+              label: "Modular core",
+              body: "Platforms that grow with the brief: new faces lock on without rewriting the cube.",
+            },
+            {
+              label: "Pressure-ready",
+              body: "From concept through launch — systems that hold under traffic, teams, and time.",
+            },
+          ],
+        },
+        system: {
+          eyebrow: "System map",
+          title: "How the software face locks.",
+          body: "Architecture, UX, scale, and launch as one closed loop — each edge a contract.",
+        },
+        move: {
+          eyebrow: "Your move",
+          title: "Ship the next module.",
+          body: "Tell us the product under pressure — we cut the first durable face from Athens.",
+          cta: "Brief this face",
+        },
+      },
     },
     websites: {
       label: "Websites",
@@ -56,7 +98,47 @@ const en: Dictionary = {
         "Design systems that feel geometric, precise, and memorable.",
         "Launch surfaces that carry strategy into the browser.",
       ],
-      graph: ["Surface", "System", "Convert"],
+      graph: ["Surface", "System", "Convert", "Channel"],
+      slides: {
+        brief: {
+          eyebrow: "Face · Web",
+          title: "Websites & digital products",
+          body: "Brand-led sites and product surfaces that carry strategy into the browser — and convert.",
+        },
+        craft: {
+          eyebrow: "How we cut it",
+          title: "A surface with a spine.",
+          points: [
+            {
+              label: "Brand surface",
+              body: "Geometry, type, and motion that make the mark feel inevitable on first scroll.",
+            },
+            {
+              label: "Design system",
+              body: "Precise components that stay coherent as pages, locales, and campaigns multiply.",
+            },
+            {
+              label: "Performance",
+              body: "Fast by structure — ready for the channels your customers already live in.",
+            },
+            {
+              label: "Conversion craft",
+              body: "Paths from curiosity to brief: CTAs, proof, and forms that respect attention.",
+            },
+          ],
+        },
+        system: {
+          eyebrow: "System map",
+          title: "How the web face locks.",
+          body: "Surface, system, convert, channel — one loop from brand signal to action.",
+        },
+        move: {
+          eyebrow: "Your move",
+          title: "Launch the next surface.",
+          body: "Share the brand moment you need online — we build the face that holds it.",
+          cta: "Brief this face",
+        },
+      },
     },
     automation: {
       label: "Automation",
@@ -68,8 +150,48 @@ const en: Dictionary = {
         "Systems that connect data, creative, and delivery.",
         "Less manual drag — more compound growth — via agentic marketing.",
       ],
-      graph: ["CRM", "Ops", "Growth"],
+      graph: ["CRM", "Ops", "Growth", "Agents"],
       graphHub: "Agentic marketing",
+      slides: {
+        brief: {
+          eyebrow: "Face · Auto",
+          title: "Automation",
+          body: "Workflows that remove friction and keep teams moving — human judgment where it matters, agents everywhere else.",
+        },
+        craft: {
+          eyebrow: "How we cut it",
+          title: "Friction out. Compound in.",
+          points: [
+            {
+              label: "CRM flows",
+              body: "Leads, stages, and handoffs that update themselves instead of living in a spreadsheet.",
+            },
+            {
+              label: "Content ops",
+              body: "Brief → draft → approve → publish as a spine, not a Slack scavenger hunt.",
+            },
+            {
+              label: "Agentic passes",
+              body: "AI-assisted execution on the timeline — research, routing, and first drafts on rails.",
+            },
+            {
+              label: "Integration spine",
+              body: "Data, creative, and delivery connected so growth compounds instead of stalling.",
+            },
+          ],
+        },
+        system: {
+          eyebrow: "System map",
+          title: "How the automation face locks.",
+          body: "CRM, ops, growth, and agents orbit one hub — agentic marketing that stays accountable.",
+        },
+        move: {
+          eyebrow: "Your move",
+          title: "Cut the manual drag.",
+          body: "Name the workflow that burns the most hours — we automate the loop from Athens.",
+          cta: "Brief this face",
+        },
+      },
     },
     services: {
       label: "Services",
@@ -81,8 +203,48 @@ const en: Dictionary = {
         "Digital innovation tied to outcomes — not decks that die in a folder.",
         "One engagement: brief, build, measure, iterate until the faces lock.",
       ],
-      graph: ["Strategy", "Campaigns", "Delivery"],
+      graph: ["Strategy", "Campaigns", "Delivery", "Measure"],
       graphHub: "Results",
+      slides: {
+        brief: {
+          eyebrow: "Face · Serv",
+          title: "Digital services",
+          body: "Human strategy that steers the system toward commercial results — not decks that die in a folder.",
+        },
+        craft: {
+          eyebrow: "How we cut it",
+          title: "Strategy that decides the next face.",
+          points: [
+            {
+              label: "Go-to-market",
+              body: "Positioning, offer, and channel choices that tell the cube what to build next.",
+            },
+            {
+              label: "Campaigns",
+              body: "Narrative and media that move demand into the surfaces and flows you already own.",
+            },
+            {
+              label: "Loyalty loops",
+              body: "Retention and community mechanics that keep the cube earning after launch.",
+            },
+            {
+              label: "Outcome cadence",
+              body: "Brief, build, measure, iterate — one engagement until the faces lock.",
+            },
+          ],
+        },
+        system: {
+          eyebrow: "System map",
+          title: "How the services face locks.",
+          body: "Strategy, campaigns, delivery, and measure around results — humans steering the machine.",
+        },
+        move: {
+          eyebrow: "Your move",
+          title: "Steer the next cycle.",
+          body: "Bring the commercial question — we pair strategy with the faces that answer it.",
+          cta: "Brief this face",
+        },
+      },
     },
     method: {
       label: "Method",
@@ -94,7 +256,47 @@ const en: Dictionary = {
         "έδρες · Faces — cut each capability with precision, then stress-test.",
         "σύνθεση · Assemble — lock faces into one system. Launch, measure, iterate.",
       ],
-      graph: ["δομή", "έδρες", "σύνθεση"],
+      graph: ["δομή", "έδρες", "σύνθεση", "μέτρο"],
+      slides: {
+        brief: {
+          eyebrow: "Face · κύβος",
+          title: "The κύβος method",
+          body: "Structure → Faces → Assemble. Build like a cube, not a pile of disconnected features.",
+        },
+        craft: {
+          eyebrow: "How we cut it",
+          title: "Four moves of the method.",
+          points: [
+            {
+              label: "δομή · Structure",
+              body: "Define goals, users, data, and constraints before any face is cut.",
+            },
+            {
+              label: "έδρες · Faces",
+              body: "Cut each capability with precision — then stress-test it in isolation.",
+            },
+            {
+              label: "σύνθεση · Assemble",
+              body: "Lock faces into one system. Edges are contracts, not accidents.",
+            },
+            {
+              label: "μέτρο · Measure",
+              body: "Launch, read the signal, iterate — the cube holds because every edge was intentional.",
+            },
+          ],
+        },
+        system: {
+          eyebrow: "System map",
+          title: "How the method locks.",
+          body: "δομή, έδρες, σύνθεση, μέτρο — the cycle that keeps every Kyvelon cube coherent.",
+        },
+        move: {
+          eyebrow: "Your move",
+          title: "Apply the method.",
+          body: "Bring a messy brief — we structure the volume, cut the faces, and assemble the system.",
+          cta: "Start with a brief",
+        },
+      },
     },
     contact: {
       label: "Contact",
@@ -106,7 +308,47 @@ const en: Dictionary = {
         "+30 6937 027 555",
         "Athens, Greece",
       ],
-      graph: ["Brief", "Reply", "Build"],
+      graph: ["Brief", "Reply", "Build", "Lock"],
+      slides: {
+        brief: {
+          eyebrow: "Face · Brief",
+          title: "Brief the next cube",
+          body: "Tell us what face you need first. We reply from Athens — usually within one working day.",
+        },
+        craft: {
+          eyebrow: "What helps",
+          title: "A brief we can cut from.",
+          points: [
+            {
+              label: "Brief",
+              body: "info@kyvelon.com — send the product, site, automation, or service under pressure.",
+            },
+            {
+              label: "Reply",
+              body: "+30 6937 027 555 — or wait for our written response with next steps.",
+            },
+            {
+              label: "Build",
+              body: "Athens, Greece — we scope the first face and the edges it must lock to.",
+            },
+            {
+              label: "Lock",
+              body: "Agree the cube: timeline, faces in play, and what success looks like.",
+            },
+          ],
+        },
+        system: {
+          eyebrow: "System map",
+          title: "From brief to locked cube.",
+          body: "Brief → reply → build → lock. One path from first message to a system that holds.",
+        },
+        move: {
+          eyebrow: "Your move",
+          title: "Send the brief.",
+          body: "Name, email, and what we should build — we take it from there.",
+          cta: "Send brief",
+        },
+      },
     },
   },
   contactForm: {

@@ -310,6 +310,16 @@ export function CubeWorld({
     return () => document.removeEventListener("keydown", onKey);
   }, [railOpen]);
 
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => {
+      if (mq.matches) setRailOpen(false);
+    };
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   return (
     <>
     {/* Keeps page flow while the cube stage stays fixed in the viewport */}
@@ -456,43 +466,63 @@ export function CubeWorld({
         <button
           type="button"
           data-hud
-          className="cube-rail-scrim absolute inset-x-0 bottom-0 z-30 bg-navy/30 backdrop-blur-[2px]"
+          className="cube-rail-scrim absolute inset-x-0 bottom-0 z-30 bg-navy/30 backdrop-blur-[2px] lg:hidden"
           style={{ top: "var(--cube-nav-offset, 4.75rem)" }}
           aria-label={t.cube.facesClose}
           onClick={() => setRailOpen(false)}
         />
       ) : null}
 
-      {/* Drawer + ear stay one unit — ear always visible */}
+      {/* Big screens: same bottom tab strip as inside a face */}
+      <nav
+        data-hud
+        className={cn(
+          "pointer-events-auto absolute inset-x-0 bottom-0 z-40 hidden gap-1.5 overflow-x-auto bg-gradient-to-t from-surface via-surface/80 to-transparent px-4 pt-10 pb-3 [scrollbar-width:none] lg:flex sm:gap-2 sm:px-5 sm:pb-4 [&::-webkit-scrollbar]:hidden",
+          hudIn ? "opacity-100" : "opacity-0",
+        )}
+        aria-label={t.cube.facesNav}
+      >
+        {FACE_ORDER.map((id) => (
+          <button
+            key={id}
+            type="button"
+            data-hud
+            onClick={() => snapTo(id)}
+            onDoubleClick={() => enterFace(id)}
+            className={cn(
+              "h-8 shrink-0 border px-2.5 text-[0.58rem] leading-8 tracking-[0.14em] uppercase backdrop-blur-md transition sm:px-3",
+              id === active
+                ? "border-electric bg-electric text-white"
+                : "border-navy/15 bg-white/75 text-navy/50 hover:border-navy/30 hover:text-navy",
+            )}
+            aria-current={id === active ? "true" : undefined}
+          >
+            {t.faces[id].short}
+          </button>
+        ))}
+      </nav>
+
+      {/* Small screens: drawer + ear */}
       <aside
         id="cube-face-rail"
         data-hud
         className={cn(
-          "cube-hud-slider cube-hud-slider-left absolute start-0 top-1/2 z-40 flex items-stretch",
+          "cube-hud-slider cube-hud-slider-left absolute start-0 top-[25%] z-40 flex items-stretch lg:hidden",
           railOpen ? "is-drawer-open" : "is-drawer-closed",
           hudIn && "is-in",
         )}
         aria-label={t.cube.facesNav}
       >
-        <div className="cube-hud-slider-shell relative flex w-[min(10.75rem,58vw)] flex-col overflow-hidden rounded-none border border-navy/10 border-e-0 bg-white/85 backdrop-blur-md sm:w-[11.25rem]">
-          <div className="flex items-center border-b border-navy/10 px-3 py-2.5 sm:px-3.5">
-            <p className="text-[0.58rem] tracking-[0.2em] text-electric uppercase">
+        <div className="cube-hud-slider-shell relative flex w-[min(7.25rem,48vw)] flex-col overflow-hidden rounded-none border border-navy/10 border-e-0 bg-white/85 backdrop-blur-md sm:w-[7.75rem]">
+          <div className="flex items-center border-b border-navy/10 px-2.5 py-2">
+            <p className="text-[0.52rem] tracking-[0.16em] text-electric uppercase">
               {t.cube.facesNav}
             </p>
           </div>
-          <nav className="relative flex flex-col py-1.5">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-y-1.5 start-0 w-[3px] bg-navy/10"
-            />
-            <span
-              aria-hidden="true"
-              className="cube-face-rail-thumb absolute start-0 z-[1] w-[3px] bg-electric"
-              style={{
-                top: `calc(0.375rem + ${activeIndex} * ((100% - 0.75rem) / ${FACE_ORDER.length}))`,
-                height: `calc((100% - 0.75rem) / ${FACE_ORDER.length})`,
-              }}
-            />
+          <nav
+            className="flex flex-col gap-1.5 p-2.5"
+            aria-label={t.cube.facesNav}
+          >
             {FACE_ORDER.map((id, index) => (
               <button
                 key={id}
@@ -504,39 +534,18 @@ export function CubeWorld({
                 }}
                 onDoubleClick={() => enterFace(id)}
                 style={{
-                  transitionDelay: railOpen ? `${90 + index * 45}ms` : "0ms",
+                  transitionDelay: railOpen ? `${90 + index * 40}ms` : "0ms",
                 }}
                 className={cn(
-                  "cube-hud-rail-item relative flex min-h-10 items-center gap-2.5 pe-3 ps-3.5 text-start sm:min-h-11 sm:pe-3.5 sm:ps-4",
+                  "cube-hud-rail-item h-8 w-full border px-2.5 text-center text-[0.58rem] leading-8 tracking-[0.14em] uppercase backdrop-blur-md transition sm:px-3",
                   active === id
-                    ? "bg-electric/5 text-navy"
-                    : "text-navy/40 hover:bg-white/50 hover:text-navy/70",
+                    ? "border-electric bg-electric text-white"
+                    : "border-navy/15 bg-white/75 text-navy/50 hover:border-navy/30 hover:text-navy",
                 )}
                 aria-current={active === id ? "true" : undefined}
                 aria-label={t.faces[id].title}
               >
-                <span
-                  className={cn(
-                    "font-mono text-[0.58rem] tracking-[0.08em] tabular-nums transition duration-300",
-                    active === id ? "text-electric" : "text-navy/30",
-                  )}
-                >
-                  0{index + 1}
-                </span>
-                <span
-                  className={cn(
-                    "text-[0.68rem] tracking-[0.16em] uppercase transition duration-300 sm:text-[0.72rem]",
-                    active === id && "font-semibold tracking-[0.14em]",
-                  )}
-                >
-                  {t.faces[id].short}
-                </span>
-                {active === id ? (
-                  <span
-                    aria-hidden="true"
-                    className="ms-auto h-1.5 w-1.5 bg-electric"
-                  />
-                ) : null}
+                {t.faces[id].short}
               </button>
             ))}
           </nav>
@@ -545,32 +554,27 @@ export function CubeWorld({
         <button
           type="button"
           data-hud
-          className="cube-rail-ear flex shrink-0 flex-col items-center justify-center gap-2 self-center border border-navy/10 border-s-0 bg-white/85 py-4 ps-2 pe-2.5 backdrop-blur-md sm:py-5 sm:pe-3"
+          className="cube-rail-ear flex shrink-0 flex-col items-center justify-center gap-2 self-end border border-navy/10 border-s-0 bg-white/85 py-4 ps-2 pe-2.5 backdrop-blur-md sm:py-5 sm:pe-3"
           aria-expanded={railOpen}
           aria-controls="cube-face-rail"
           aria-label={railOpen ? t.cube.facesClose : t.cube.facesOpen}
           onClick={() => setRailOpen((open) => !open)}
         >
-          {railOpen ? (
-            <span
-              aria-hidden="true"
-              className="text-[1.35rem] leading-none text-navy/55"
-            >
-              ×
-            </span>
-          ) : (
-            <>
-              <span className="font-mono text-[0.55rem] tracking-[0.14em] text-electric tabular-nums">
-                0{activeIndex + 1}
-              </span>
-              <span className="cube-rail-tab-label text-[0.58rem] font-semibold tracking-[0.22em] text-navy uppercase">
-                {face.short}
-              </span>
-              <span aria-hidden="true" className="text-electric/80">
-                ›
-              </span>
-            </>
-          )}
+          <span className="font-mono text-[0.55rem] tracking-[0.14em] text-electric tabular-nums">
+            0{activeIndex + 1}
+          </span>
+          <span className="cube-rail-tab-label text-[0.58rem] font-semibold tracking-[0.22em] text-navy uppercase">
+            {face.short}
+          </span>
+          <span
+            aria-hidden="true"
+            className={cn(
+              "leading-none",
+              railOpen ? "text-[0.95rem] text-navy/55" : "text-electric/80",
+            )}
+          >
+            {railOpen ? "×" : "›"}
+          </span>
         </button>
       </aside>
 

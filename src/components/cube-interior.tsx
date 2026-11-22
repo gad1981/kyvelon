@@ -22,53 +22,56 @@ const FACE_COLOR: Record<CubeFaceId, string> = {
   contact: "#122044",
 };
 
-type Panel = "copy" | "graph";
+/** Wall placement around Y: front, right, back, left */
+const WALL_Y = [0, 90, 180, -90] as const;
+
+export type FaceWall = {
+  label: string;
+  content: ReactNode;
+  /** Centered visual (e.g. system graph) vs scrollable copy */
+  mode?: "copy" | "visual";
+};
 
 type CubeInteriorRoomProps = {
   faceId: CubeFaceId;
   short: string;
   arriving?: boolean;
-  text: ReactNode;
-  visual: ReactNode;
-  copyLabel: string;
-  graphLabel: string;
+  walls: FaceWall[];
   nextLabel: string;
   prevLabel: string;
   className?: string;
 };
 
 /**
- * Inside a face: two full cube sides — copy (front) and graph (right).
- * Copy rests as a true full-bleed flat wall; 3D engages only while flipping.
+ * Inside a face: four full-bleed walls — Brief → Craft → System → Move.
+ * First wall rests flat; 3D engages while flipping between walls.
  */
 export function CubeInteriorRoom({
   faceId,
   short,
   arriving = false,
-  text,
-  visual,
-  copyLabel,
-  graphLabel,
+  walls,
   nextLabel,
   prevLabel,
   className,
 }: CubeInteriorRoomProps) {
   const color = FACE_COLOR[faceId];
-  const [panel, setPanel] = useState<Panel>("copy");
+  const count = walls.length;
+  const [index, setIndex] = useState(0);
   const [yaw, setYaw] = useState(0);
   const [solid, setSolid] = useState(false);
   const [flipping, setFlipping] = useState(false);
   const [depth, setDepth] = useState(() =>
     typeof window !== "undefined" ? Math.round(window.innerWidth) : 1024,
   );
-  const sceneRef = useRef<HTMLDivElement>(null);
   const cubeRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number; decided?: "x" | "y" } | null>(
     null,
   );
   const reduced = useRef(false);
-  const panelRef = useRef(panel);
-  panelRef.current = panel;
+  const indexRef = useRef(index);
+  indexRef.current = index;
+  const snapAfter = useRef<number | null>(null);
 
   useEffect(() => {
     reduced.current = window.matchMedia(
@@ -77,10 +80,11 @@ export function CubeInteriorRoom({
   }, []);
 
   useEffect(() => {
-    setPanel("copy");
+    setIndex(0);
     setYaw(0);
     setSolid(false);
     setFlipping(false);
+    snapAfter.current = null;
   }, [faceId]);
 
   useLayoutEffect(() => {
@@ -96,46 +100,76 @@ export function CubeInteriorRoom({
     return () => ro.disconnect();
   }, []);
 
-  const go = useCallback((next: Panel) => {
-    if (next === panelRef.current) return;
-    const targetYaw = next === "copy" ? 0 : -90;
-
-    if (reduced.current) {
-      setPanel(next);
-      setYaw(targetYaw);
-      setSolid(next === "graph");
-      setFlipping(false);
-      return;
-    }
-
-    setFlipping(true);
-    setPanel(next);
-
-    if (next === "graph") {
-      // Seat the wall in 3D at yaw 0 (still full-bleed), then turn.
-      setSolid(true);
-      setYaw(0);
-      setFlipping(false);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setFlipping(true);
-          setYaw(-90);
-        });
-      });
-      return;
-    }
-
-    // Already solid on graph — rotate back, flatten after transition.
-    setSolid(true);
-    setFlipping(true);
-    setYaw(0);
+  const finishAt = useCallback((at: number) => {
+    setFlipping(false);
+    if (at === 0) setSolid(false);
   }, []);
+
+  const go = useCallback(
+    (next: number) => {
+      if (count < 1) return;
+      const from = indexRef.current;
+      const target = ((next % count) + count) % count;
+      if (target === from) return;
+
+      if (reduced.current) {
+        setIndex(target);
+        setYaw(-target * 90);
+        setSolid(target !== 0);
+        setFlipping(false);
+        return;
+      }
+
+      setIndex(target);
+
+      // Leaving flat brief wall — seat in 3D at yaw 0, then turn.
+      if (from === 0 && !solid) {
+        setSolid(true);
+        setYaw(0);
+        setFlipping(false);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setFlipping(true);
+            setYaw(-target * 90);
+          });
+        });
+        return;
+      }
+
+      setSolid(true);
+      setFlipping(true);
+
+      // Wrap forward 3 → 0 via -360, then snap.
+      if (from === count - 1 && target === 0) {
+        snapAfter.current = 0;
+        setYaw(-count * 90);
+        return;
+      }
+      // Wrap back 0 → last via +90, then snap to canonical yaw.
+      if (from === 0 && target === count - 1) {
+        snapAfter.current = -(count - 1) * 90;
+        setYaw(90);
+        return;
+      }
+
+      snapAfter.current = null;
+      setYaw(-target * 90);
+    },
+    [count, solid],
+  );
 
   const onFlipEnd = (e: ReactTransitionEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
     if (e.propertyName !== "transform") return;
-    setFlipping(false);
-    if (panelRef.current === "copy") setSolid(false);
+    if (snapAfter.current !== null) {
+      const snap = snapAfter.current;
+      snapAfter.current = null;
+      setFlipping(false);
+      setYaw(snap);
+      finishAt(indexRef.current);
+      return;
+    }
+    finishAt(indexRef.current);
   };
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -157,11 +191,16 @@ export function CubeInteriorRoom({
     if (!start || start.decided === "y") return;
     const dx = e.clientX - start.x;
     if (Math.abs(dx) < 48) return;
-    if (dx < 0) go("graph");
-    else go("copy");
+    if (dx < 0) go(indexRef.current + 1);
+    else go(indexRef.current - 1);
   };
 
   const half = depth / 2;
+  const active = walls[index];
+  const hint =
+    index < count - 1
+      ? `${nextLabel} · ${walls[(index + 1) % count]?.label ?? ""}`
+      : `${prevLabel} · ${walls[Math.max(0, index - 1)]?.label ?? ""}`;
 
   return (
     <div
@@ -183,7 +222,6 @@ export function CubeInteriorRoom({
       />
 
       <div
-        ref={sceneRef}
         className="chamber-scene absolute inset-0 z-[1] touch-pan-y"
         style={
           solid
@@ -213,139 +251,97 @@ export function CubeInteriorRoom({
           }}
           onTransitionEnd={onFlipEnd}
         >
-          {/* FRONT — copy */}
-          <section
-            className="chamber-side chamber-side-copy absolute inset-0 overflow-hidden"
-            style={{
-              transform: solid
-                ? `rotateY(0deg) translateZ(${half}px)`
-                : "none",
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-              background: `linear-gradient(165deg, ${color} 0%, #071228 48%, #020612 100%)`,
-              boxShadow: "inset 0 0 80px rgb(0 56 248 / 0.22)",
-            }}
-            aria-hidden={panel !== "copy"}
-          >
-            <div className="chamber-wall-grid" aria-hidden="true" />
-            <div className="chamber-scan" aria-hidden="true" />
-            <div className="relative z-[1] flex h-full flex-col justify-center overflow-y-auto p-[clamp(1.25rem,4vw,2.75rem)] pb-16">
-              {text}
-            </div>
-            <p className="chamber-side-tag" aria-hidden="true">
-              {copyLabel}
-            </p>
-          </section>
-
-          {/* RIGHT — graph */}
-          <section
-            className="chamber-side chamber-side-graph absolute inset-0 overflow-hidden"
-            style={{
-              transform: solid
-                ? `rotateY(90deg) translateZ(${half}px)`
-                : "rotateY(90deg) translateZ(100%)",
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-              background: `linear-gradient(210deg, ${color} 0%, #030918 50%, #01040c 100%)`,
-              boxShadow: "inset 0 0 100px rgb(0 56 248 / 0.35)",
-              visibility: solid ? "visible" : "hidden",
-            }}
-            aria-hidden={panel !== "graph"}
-          >
-            <div className="chamber-wall-grid" aria-hidden="true" />
-            <div
-              className="chamber-scan chamber-scan-slow"
-              aria-hidden="true"
-            />
-            <div className="relative z-[1] flex h-full items-center justify-center p-[clamp(0.75rem,3vw,2rem)] pb-14">
-              {visual}
-            </div>
-            <p className="chamber-side-tag" aria-hidden="true">
-              {graphLabel}
-            </p>
-          </section>
-
-          {solid ? (
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 left-0 w-px"
-              style={{
-                transform: `rotateY(-90deg) translateZ(${half}px)`,
-                background:
-                  "linear-gradient(180deg, transparent, rgb(122 160 255 / 0.55), transparent)",
-              }}
-            />
-          ) : null}
+          {walls.map((wall, i) => {
+            const live = solid || i === 0;
+            return (
+              <section
+                key={wall.label}
+                className="chamber-side absolute inset-0 overflow-hidden"
+                style={{
+                  transform: solid
+                    ? `rotateY(${WALL_Y[i] ?? 0}deg) translateZ(${half}px)`
+                    : i === 0
+                      ? "none"
+                      : `rotateY(${WALL_Y[i] ?? 0}deg) translateZ(100%)`,
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  background: `linear-gradient(${165 + i * 15}deg, ${color} 0%, #071228 48%, #020612 100%)`,
+                  boxShadow: "inset 0 0 80px rgb(0 56 248 / 0.22)",
+                  visibility: live ? "visible" : "hidden",
+                }}
+                aria-hidden={index !== i}
+              >
+                <div className="chamber-wall-grid" aria-hidden="true" />
+                <div
+                  className={cn(
+                    "chamber-scan",
+                    i % 2 === 1 && "chamber-scan-slow",
+                  )}
+                  aria-hidden="true"
+                />
+                <div
+                  className={cn(
+                    "relative z-[1] flex h-full overflow-y-auto p-[clamp(1.25rem,4vw,2.75rem)] pb-20",
+                    wall.mode === "visual"
+                      ? "items-center justify-center"
+                      : "flex-col justify-center",
+                  )}
+                >
+                  {wall.content}
+                </div>
+                <p className="chamber-side-tag" aria-hidden="true">
+                  {wall.label}
+                </p>
+              </section>
+            );
+          })}
         </div>
       </div>
 
-      {/* Flip arrows */}
       <div
         data-carousel-ctrl
-        className="pointer-events-none absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 items-center justify-between px-2 sm:px-4"
+        className="absolute inset-x-0 bottom-[4.75rem] z-20 flex flex-col items-center gap-3 sm:bottom-[5.25rem]"
       >
-        <button
-          type="button"
-          data-carousel-ctrl
-          disabled={panel === "copy"}
-          onClick={() => go("copy")}
-          className={cn(
-            "pointer-events-auto flex h-12 w-12 items-center justify-center border backdrop-blur-md transition sm:h-14 sm:w-14",
-            panel === "copy"
-              ? "border-white/10 text-white/20"
-              : "border-white/30 bg-black/40 text-white hover:border-electric hover:text-electric-soft",
-          )}
-          aria-label={prevLabel}
-        >
-          <Arrow dir="left" />
-        </button>
-        <button
-          type="button"
-          data-carousel-ctrl
-          disabled={panel === "graph"}
-          onClick={() => go("graph")}
-          className={cn(
-            "pointer-events-auto flex h-12 w-12 items-center justify-center border backdrop-blur-md transition sm:h-14 sm:w-14",
-            panel === "graph"
-              ? "border-white/10 text-white/20"
-              : "border-white/30 bg-black/40 text-white hover:border-electric hover:text-electric-soft chamber-arrow-pulse",
-          )}
-          aria-label={nextLabel}
-        >
-          <Arrow dir="right" />
-        </button>
-      </div>
-
-      <div
-        data-carousel-ctrl
-        className="absolute inset-x-0 bottom-[4.75rem] z-20 flex flex-col items-center gap-2 sm:bottom-[5.25rem]"
-      >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 sm:gap-4">
           <button
             type="button"
             data-carousel-ctrl
-            onClick={() => go("copy")}
-            className={cn(
-              "h-1.5 w-6 transition",
-              panel === "copy" ? "bg-electric" : "bg-white/25 hover:bg-white/45",
-            )}
-            aria-label={copyLabel}
-            aria-current={panel === "copy" ? "true" : undefined}
-          />
+            onClick={() => go(index - 1)}
+            className="flex h-10 w-10 items-center justify-center border border-white/30 bg-black/40 text-white backdrop-blur-md transition hover:border-electric hover:text-electric-soft sm:h-11 sm:w-11"
+            aria-label={prevLabel}
+          >
+            <Arrow dir="left" />
+          </button>
+          <div className="flex items-center gap-2">
+            {walls.map((wall, i) => (
+              <button
+                key={wall.label}
+                type="button"
+                data-carousel-ctrl
+                onClick={() => go(i)}
+                className={cn(
+                  "h-1.5 w-6 transition",
+                  i === index ? "bg-electric" : "bg-white/25 hover:bg-white/45",
+                )}
+                aria-label={wall.label}
+                aria-current={i === index ? "true" : undefined}
+              />
+            ))}
+          </div>
           <button
             type="button"
             data-carousel-ctrl
-            onClick={() => go("graph")}
-            className={cn(
-              "h-1.5 w-6 transition",
-              panel === "graph" ? "bg-electric" : "bg-white/25 hover:bg-white/45",
-            )}
-            aria-label={graphLabel}
-            aria-current={panel === "graph" ? "true" : undefined}
-          />
+            onClick={() => go(index + 1)}
+            className="flex h-10 w-10 items-center justify-center border border-white/30 bg-black/40 text-white backdrop-blur-md transition hover:border-electric hover:text-electric-soft chamber-arrow-pulse sm:h-11 sm:w-11"
+            aria-label={nextLabel}
+          >
+            <Arrow dir="right" />
+          </button>
         </div>
         <p className="text-[0.55rem] tracking-[0.2em] text-white/40 uppercase">
-          {panel === "copy" ? nextLabel : prevLabel} · {short}
+          {active?.label} · {short}
+          <span className="mx-2 text-white/20">·</span>
+          {hint}
         </p>
       </div>
 

@@ -24,8 +24,10 @@ type SiteHeaderProps = {
   priority?: boolean;
   /** Extra controls beside the logo (e.g. back link). */
   startExtra?: Slot;
-  /** Extra controls beside the tagline (e.g. sound toggle). */
+  /** Extra controls beside the tagline. */
   endExtra?: Slot;
+  /** Extra controls inside the burger sheet (and desktop nav). */
+  menuExtra?: Slot;
   /** Cube HUD: ignore pointer events except interactive children. */
   hud?: boolean;
   className?: string;
@@ -77,6 +79,7 @@ export function SiteHeader({
   priority = false,
   startExtra,
   endExtra,
+  menuExtra,
   hud = false,
   className,
 }: SiteHeaderProps) {
@@ -113,7 +116,7 @@ export function SiteHeader({
       data-site-header
       data-hud={hud ? true : undefined}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 px-5 pt-6 pb-4 transition-[background-color,border-color,backdrop-filter] duration-300 sm:px-8 data-[menu-open]:z-[110]",
+        "fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 px-5 pt-6 pb-4 transition-[background-color,border-color,backdrop-filter] duration-300 sm:px-8 data-[menu-open]:z-40",
         scrolled &&
           (tone === "dark"
             ? "border-b border-white/10 bg-navy/80 backdrop-blur-md"
@@ -141,6 +144,7 @@ export function SiteHeader({
         locale={locale}
         t={t}
         tone={tone}
+        menuExtra={resolveSlot(menuExtra, tone)}
         trailing={
           <>
             <p className="pointer-events-none hidden max-w-[11rem] text-end sm:block sm:max-w-[14rem]">

@@ -22,6 +22,8 @@ type SiteMenuProps = {
   className?: string;
   /** Right-side chrome (tagline, extras) — sits with the mobile burger. */
   trailing?: ReactNode;
+  /** Extra controls inside the mobile sheet (and beside desktop lang). */
+  menuExtra?: ReactNode;
 };
 
 export function SiteMenu({
@@ -30,6 +32,7 @@ export function SiteMenu({
   tone = "dark",
   className,
   trailing,
+  menuExtra,
 }: SiteMenuProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
@@ -65,7 +68,7 @@ export function SiteMenu({
     };
   }, [open]);
 
-  // Keep header (and burger) above the portaled sheet while open.
+  // Cover every fixed layer (header, cube HUD, noise, cookies) while open.
   useEffect(() => {
     const header = document.querySelector<HTMLElement>("[data-site-header]");
     if (!header) return;
@@ -127,6 +130,9 @@ export function SiteMenu({
           tone={tone}
           variant="dropdown"
         />
+        {menuExtra ? (
+          <div className="flex items-center">{menuExtra}</div>
+        ) : null}
       </div>
 
       <div
@@ -175,119 +181,118 @@ export function SiteMenu({
         {open && typeof document !== "undefined"
           ? createPortal(
               <div
-                className="fixed inset-0 z-[100] md:hidden"
+                id={panelId}
+                className={cn(
+                  "fixed inset-0 z-[300] flex flex-col md:hidden",
+                  tone === "dark"
+                    ? "bg-[#040a18] text-white"
+                    : "bg-surface text-navy",
+                )}
                 role="dialog"
                 aria-modal="true"
                 aria-label={m.title}
               >
-                <button
-                  type="button"
-                  className="absolute inset-0 bg-black/55 backdrop-blur-sm"
-                  aria-label={m.close}
-                  onClick={() => setOpen(false)}
-                />
-                <div
-                  id={panelId}
-                  className={cn(
-                    "absolute inset-y-0 end-0 flex w-[min(100%,22rem)] flex-col border-s shadow-2xl",
-                    tone === "dark"
-                      ? "border-white/10 bg-[#040a18] text-white"
-                      : "border-navy/10 bg-surface text-navy",
-                  )}
+                <div className="flex shrink-0 items-center justify-between border-b border-current/10 px-5 pt-[max(1.5rem,env(safe-area-inset-top))] pb-4 sm:px-8">
+                  <p className="text-[0.62rem] tracking-[0.22em] text-electric uppercase">
+                    {m.title}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 border border-electric text-current"
+                    aria-label={m.close}
+                  >
+                    <span className="block h-px w-4 origin-center translate-y-[3.5px] rotate-45 bg-current" />
+                    <span className="block h-px w-4 opacity-0 bg-current" />
+                    <span className="block h-px w-4 origin-center -translate-y-[3.5px] -rotate-45 bg-current" />
+                  </button>
+                </div>
+
+                <nav
+                  className="min-h-0 flex-1 overflow-y-auto px-5 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-8"
+                  aria-label={m.title}
                 >
-                  <div className="flex items-center justify-between border-b border-current/10 px-5 py-4">
-                    <p className="text-[0.62rem] tracking-[0.22em] text-electric uppercase">
-                      {m.title}
+                  <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
+                    {f.explore}
+                  </p>
+                  <ul className="mt-5 space-y-4">
+                    <li>
+                      <Link
+                        href={`${home}#cube`}
+                        className={cn("font-display text-2xl sm:text-3xl", linkCls)}
+                      >
+                        {f.theCube}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={`/${locale}/work`}
+                        className={cn("font-display text-2xl sm:text-3xl", linkCls)}
+                      >
+                        {f.work}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={`/${locale}/insights`}
+                        className={cn("font-display text-2xl sm:text-3xl", linkCls)}
+                      >
+                        {f.insights}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={`/${locale}/people`}
+                        className={cn("font-display text-2xl sm:text-3xl", linkCls)}
+                      >
+                        {f.people}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={`/${locale}/contact`}
+                        className={cn("font-display text-2xl sm:text-3xl", linkCls)}
+                      >
+                        {f.startBrief}
+                      </Link>
+                    </li>
+                  </ul>
+
+                  <p className="mt-12 text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
+                    {f.faces}
+                  </p>
+                  <ul className="mt-4 space-y-3">
+                    {SERVICE_FACE_IDS.map((id) => (
+                      <li key={id}>
+                        <Link
+                          href={`/${locale}/faces/${id}`}
+                          className={cn("text-base sm:text-lg", linkCls)}
+                        >
+                          {t.faces[id].title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-12 border-t border-current/10 pt-8">
+                    <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
+                      {t.lang.label}
                     </p>
-                    <button
-                      type="button"
-                      onClick={() => setOpen(false)}
-                      className="text-[0.62rem] tracking-[0.16em] uppercase opacity-50 transition hover:opacity-100"
-                    >
-                      {m.close}
-                    </button>
+                    <LanguageSwitcher
+                      locale={locale}
+                      label={t.lang.label}
+                      tone={tone === "dark" ? "dark" : "light"}
+                      compact
+                      className="mt-4"
+                    />
                   </div>
 
-                  <nav
-                    className="flex-1 overflow-y-auto px-5 py-6"
-                    aria-label={m.title}
-                  >
-                    <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
-                      {f.explore}
-                    </p>
-                    <ul className="mt-3 space-y-3">
-                      <li>
-                        <Link
-                          href={`${home}#cube`}
-                          className={cn("font-display text-xl", linkCls)}
-                        >
-                          {f.theCube}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href={`/${locale}/work`}
-                          className={cn("font-display text-xl", linkCls)}
-                        >
-                          {f.work}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href={`/${locale}/insights`}
-                          className={cn("font-display text-xl", linkCls)}
-                        >
-                          {f.insights}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href={`/${locale}/people`}
-                          className={cn("font-display text-xl", linkCls)}
-                        >
-                          {f.people}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href={`/${locale}/contact`}
-                          className={cn("font-display text-xl", linkCls)}
-                        >
-                          {f.startBrief}
-                        </Link>
-                      </li>
-                    </ul>
-
-                    <p className="mt-10 text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
-                      {f.faces}
-                    </p>
-                    <ul className="mt-3 space-y-2.5">
-                      {SERVICE_FACE_IDS.map((id) => (
-                        <li key={id}>
-                          <Link
-                            href={`/${locale}/faces/${id}`}
-                            className={cn("text-sm", linkCls)}
-                          >
-                            {t.faces[id].title}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mt-10 border-t border-current/10 pt-6">
-                      <p className="text-[0.58rem] tracking-[0.2em] text-electric/80 uppercase">
-                        {t.lang.label}
-                      </p>
-                      <LanguageSwitcher
-                        locale={locale}
-                        label={t.lang.label}
-                        tone={tone === "dark" ? "dark" : "light"}
-                        compact
-                        className="mt-3"
-                      />
+                  {menuExtra ? (
+                    <div className="mt-10 border-t border-current/10 pt-8">
+                      {menuExtra}
                     </div>
-                  </nav>
-                </div>
+                  ) : null}
+                </nav>
               </div>,
               document.body,
             )
